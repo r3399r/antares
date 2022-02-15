@@ -12,7 +12,3 @@ export default defineConfig({
     },
   },
 });
-
-module.exports = {
-  publicPath: "/porrima/",
-};

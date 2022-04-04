@@ -42,8 +42,8 @@ const SuperLotto638 = () => {
         2 億元，則獎金以 2 億元計算。頭獎及貳獎若無人獲得該獎項，則累積納入次期該獎項。
       </p>
       <p>第一區 38 選 6 且第二區 8 選 1 的全部組合數總共有 {all.toLocaleString()} 組。</p>
-      <TableContainer component={Paper} className={style.table}>
-        <Table>
+      <TableContainer component={Paper}>
+        <Table className={style.table}>
           <TableHead>
             <TableRow>
               <TableCell>中獎方式</TableCell>

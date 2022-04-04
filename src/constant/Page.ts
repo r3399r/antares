@@ -1,4 +1,5 @@
 export enum Page {
-  Landing = 'porrima/',
-  Instant = 'porrima/instant',
+  Landing = '/',
+  Lottery = '/lottery',
+  Instant = '/instant',
 }

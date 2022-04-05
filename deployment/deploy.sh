@@ -23,14 +23,3 @@ npm i
 npm run pre:deploy
 aws s3 sync ./dist s3://$project-$env --delete --cache-control no-cache
 echo ====================================================================================
-
-if [ $1 = "prod" ]
-  then
-    echo "do tagging process..."
-    cd ..
-    version=$(node -pe "require('./package.json').version")
-    git config --global user.email "github-actions-bot@github.com"
-    git config --global user.name "github-actions-bot"
-    git tag -a $version -m "$version"
-    git push origin $version
-fi

@@ -11,6 +11,7 @@
 # production
 /build
 /dist
+/deployment/packaged.yaml
 
 # misc
 .DS_Store

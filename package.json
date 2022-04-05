@@ -17,8 +17,7 @@
     "fix": "run-s fix:*",
     "clean": "del-cli dist -f",
     "pre:commit": "npm run lint",
-    "pre:deploy": "run-s clean build",
-    "deploy": "gh-pages -d dist"
+    "pre:deploy": "run-s clean build"
   },
   "dependencies": {
     "@emotion/react": "^11.8.2",
@@ -51,7 +50,6 @@
     "eslint-import-resolver-typescript": "^2.7.0",
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-react": "^7.29.4",
-    "gh-pages": "^3.2.3",
     "husky": "^7.0.4",
     "jest-watch-typeahead": "^0.6.5",
     "npm-run-all": "^4.1.5",
@@ -69,6 +67,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "homepage": "https://r3399r.github.io/porrima/"
+  }
 }

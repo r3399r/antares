@@ -15,7 +15,7 @@ import style from './Lottery.module.scss';
 
 const Lottery = () => {
   const { search } = useLocation();
-  const [queryParam, setQueryParam] = useSearchParams();
+  const [queryParamIgnored, setQueryParam] = useSearchParams();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [code, setCode] = useState<string>(lotteryGames[0].code);
   const open = Boolean(anchorEl);

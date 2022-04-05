@@ -1,6 +1,6 @@
 {
   "name": "porrima",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "scripts": {
     "start": "cross-env BROWSER=none PORT=3002 react-scripts start",

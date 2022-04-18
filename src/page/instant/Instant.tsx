@@ -61,8 +61,8 @@ const Instant = () => (
                 {sum(v.structure.map((o) => (o.prize * o.howMany) / v.total)).toLocaleString()}
               </div>
               <div>總中獎率: {((prized / v.total) * 100).toFixed(5)}%</div>
-              <div>回本機率: {((backCost / v.total) * 100).toFixed(5)}%</div>
-              <div>賺錢機率: {((earned / v.total) * 100).toFixed(5)}%</div>
+              <div>單張回本機率: {((backCost / v.total) * 100).toFixed(5)}%</div>
+              <div>單張賺錢機率: {((earned / v.total) * 100).toFixed(5)}%</div>
             </div>
           </AccordionDetails>
         </Accordion>

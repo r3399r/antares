@@ -2,6 +2,43 @@ import { Instant } from 'src/model/GameType';
 
 export const instants: Instant[] = [
   {
+    id: 4567,
+    topic: '金鑽999',
+    cost: 200,
+    total: 3570000,
+    releaseDate: '2022/5/3',
+    structure: [
+      { prize: 2000000, howMany: 3 },
+      { prize: 90000, howMany: 7 },
+      { prize: 10000, howMany: 17 },
+      { prize: 5000, howMany: 1399 },
+      { prize: 2000, howMany: 70306 },
+      { prize: 900, howMany: 115359 },
+      { prize: 500, howMany: 75710 },
+      { prize: 300, howMany: 171345 },
+      { prize: 200, howMany: 549350 },
+    ],
+  },
+  {
+    id: 4566,
+    topic: '金好中',
+    cost: 200,
+    total: 3570000,
+    releaseDate: '2022/5/3',
+    structure: [
+      { prize: 550000, howMany: 50 },
+      { prize: 55000, howMany: 56 },
+      { prize: 10000, howMany: 145 },
+      { prize: 5000, howMany: 1560 },
+      { prize: 3000, howMany: 2854 },
+      { prize: 2000, howMany: 8595 },
+      { prize: 1000, howMany: 42802 },
+      { prize: 500, howMany: 14300 },
+      { prize: 300, howMany: 42819 },
+      { prize: 200, howMany: 1675321 },
+    ],
+  },
+  {
     id: 4565,
     topic: '喜從天降',
     cost: 100,

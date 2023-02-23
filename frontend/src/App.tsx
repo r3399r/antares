@@ -1,3 +1,5 @@
-const App = () => <div className="bg-yellow-200">hi</div>;
+import AppRoutes from './Routes';
+
+const App = () => <AppRoutes />;
 
 export default App;

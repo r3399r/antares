@@ -13,10 +13,10 @@ export type InstantStat = {
   cost: number;
   totalW: number;
   totalR: number;
-  bingoRate: string;
-  winRate: string;
-  noLoseRate: string;
-  expect: string;
+  bingoRate: number;
+  winRate: number;
+  noLoseRate: number;
+  expect: number;
   topPrize: number;
   topCount: number;
   closeDate: string;

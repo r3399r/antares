@@ -23,10 +23,10 @@ export const getStats = (
         if (v.prize > topPrize) topPrize = v.prize;
       });
 
-      const bingoRate = totalBingo.div(data.total).times(100).toFixed(1);
-      const winRate = totalWin.div(data.total).times(100).toFixed(1);
-      const noLoseRate = totalNoLose.div(data.total).times(100).toFixed(1);
-      const expect = product.div(data.total).div(data.cost).times(100).toFixed(1);
+      const bingoRate = totalBingo.div(data.total).times(100).toNumber();
+      const winRate = totalWin.div(data.total).times(100).toNumber();
+      const noLoseRate = totalNoLose.div(data.total).times(100).toNumber();
+      const expect = product.div(data.total).div(data.cost).times(100).toNumber();
 
       return {
         id: data.id,

@@ -1,6 +1,8 @@
+import classNames from 'classnames';
 import { useCallback, useEffect, useState } from 'react';
 import { InstantStat } from 'src/model/Instant';
 import { getStats } from 'src/service/instantService';
+import { bn } from 'src/util/bignumber';
 
 const Instant = () => {
   const [stats, setStats] = useState<InstantStat[]>();
@@ -24,58 +26,110 @@ const Instant = () => {
   );
 
   return (
-    <div className="overflow-x-auto h-screen py-5">
-      <div className="flex items-center text-center min-w-[840px] max-w-[1440px] mx-auto">
-        <div className="w-1/6 min-w-[140px] p-1 cursor-pointer" onClick={() => click('id')}>
-          刮刮樂主題
+    <div className="overflow-x-auto min-h-screen py-5 bg-red-700">
+      <div className="flex items-center text-center min-w-[900px] max-w-[1440px] h-[64px] mx-auto bg-red-500 text-yellow-50 font-bold">
+        <div
+          className="w-1/6 min-w-[150px] h-full cursor-pointer bg-orange-500 flex items-center justify-center"
+          onClick={() => click('id')}
+        >
+          <div className="p-1">刮刮樂主題{sort === 'id' && <span>↓</span>}</div>
         </div>
-        <div className="w-1/12 min-w-[70px] p-1 cursor-pointer" onClick={() => click('cost')}>
-          售價
+        <div
+          className="w-1/12 min-w-[75px] h-full cursor-pointer bg-orange-500 flex items-center justify-center"
+          onClick={() => click('cost')}
+        >
+          <div className="p-1">售價{sort === 'cost' && <span>↓</span>}</div>
         </div>
-        <div className="w-1/12 min-w-[70px] p-1 cursor-pointer" onClick={() => click('totalW')}>
-          發行數量
+        <div
+          className="w-1/12 min-w-[75px] h-full cursor-pointer bg-orange-500 flex items-center justify-center"
+          onClick={() => click('totalW')}
+        >
+          <div className="p-1">發行數量{sort === 'totalW' && <span>↓</span>}</div>
         </div>
-        <div className="w-1/12 min-w-[70px] p-1 cursor-pointer" onClick={() => click('bingoRate')}>
-          中獎率
+        <div
+          className="w-1/12 min-w-[75px] h-full cursor-pointer bg-orange-900 flex items-center justify-center"
+          onClick={() => click('bingoRate')}
+        >
+          <div className="p-1">中獎率{sort === 'bingoRate' && <span>↓</span>}</div>
         </div>
-        <div className="w-1/12 min-w-[70px] p-1 cursor-pointer" onClick={() => click('winRate')}>
-          勝率
+        <div
+          className="w-1/12 min-w-[75px] h-full cursor-pointer bg-red-400 flex items-center justify-center"
+          onClick={() => click('winRate')}
+        >
+          <div className="p-1">勝率{sort === 'winRate' && <span>↓</span>}</div>
         </div>
-        <div className="w-1/12 min-w-[70px] p-1 cursor-pointer" onClick={() => click('noLoseRate')}>
-          回本率
+        <div
+          className="w-1/12 min-w-[75px] h-full cursor-pointer bg-red-400 flex items-center justify-center"
+          onClick={() => click('noLoseRate')}
+        >
+          <div className="p-1">回本率{sort === 'noLoseRate' && <span>↓</span>}</div>
         </div>
-        <div className="w-1/12 min-w-[70px] p-1 cursor-pointer" onClick={() => click('expect')}>
-          每百元期望值
+        <div
+          className="w-1/12 min-w-[75px] h-full cursor-pointer bg-red-400 flex items-center justify-center"
+          onClick={() => click('expect')}
+        >
+          <div className="p-1">每百元期望值{sort === 'expect' && <span>↓</span>}</div>
         </div>
-        <div className="w-1/12 min-w-[70px] p-1 cursor-pointer" onClick={() => click('topPrize')}>
-          頭獎獎金
+        <div
+          className="w-1/12 min-w-[75px] h-full cursor-pointer flex items-center justify-center"
+          onClick={() => click('topPrize')}
+        >
+          <div className="p-1">頭獎獎金{sort === 'topPrize' && <span>↓</span>}</div>
         </div>
-        <div className="w-1/12 min-w-[70px] p-1 cursor-pointer" onClick={() => click('topCount')}>
-          頭獎數量
+        <div
+          className="w-1/12 min-w-[75px] h-full cursor-pointer flex items-center justify-center"
+          onClick={() => click('topCount')}
+        >
+          <div className="p-1">頭獎數量{sort === 'topCount' && <span>↓</span>}</div>
         </div>
-        <div className="w-1/12 min-w-[70px] p-1 cursor-pointer" onClick={() => click('closeDate')}>
-          下市日
+        <div
+          className="w-1/6 min-w-[150px] h-full cursor-pointer flex items-center justify-center"
+          onClick={() => click('closeDate')}
+        >
+          <div className="p-1">下市日{sort === 'closeDate' && <span>↓</span>}</div>
         </div>
-        <div className="w-1/12 min-w-[70px] p-1" />
       </div>
-      {stats?.map((v) => (
+      {stats?.map((v, i) => (
         <div
           key={v.id}
-          className="flex items-center text-center min-w-[840px] max-w-[1440px] mx-auto"
+          className={classNames(
+            'flex items-center text-center min-w-[900px] max-w-[1440px] mx-auto text-orange-900',
+            {
+              'bg-yellow-200': i % 2 === 0,
+              'bg-yellow-100': i % 2 === 1,
+            },
+          )}
         >
-          <div className="w-1/6 min-w-[140px] p-1">{v.topic}</div>
-          <div className="w-1/12 min-w-[70px] p-1">{v.cost}元</div>
-          <div className="w-1/12 min-w-[70px] p-1">
+          <div className="w-1/6 min-w-[150px] p-1 font-bold">{v.topic}</div>
+          <div className="w-1/12 min-w-[75px] p-1">{v.cost}元</div>
+          <div className="w-1/12 min-w-[75px] p-1">
             {v.totalW}萬{v.totalR === 0 ? '' : v.totalR}張
           </div>
-          <div className="w-1/12 min-w-[70px] p-1">{v.bingoRate}%</div>
-          <div className="w-1/12 min-w-[70px] p-1">{v.winRate}%</div>
-          <div className="w-1/12 min-w-[70px] p-1">{v.noLoseRate}%</div>
-          <div className="w-1/12 min-w-[70px] p-1">{v.expect}元</div>
-          <div className="w-1/12 min-w-[70px] p-1">{v.topPrize}萬元</div>
-          <div className="w-1/12 min-w-[70px] p-1">{v.topCount}張</div>
-          <div className="w-1/12 min-w-[70px] p-1 break-words">{v.closeDate}</div>
-          <div className="w-1/12 min-w-[70px] p-1">詳情</div>
+          <div className="w-1/12 min-w-[75px] p-1 relative">
+            <div className="relative z-10">{bn(v.bingoRate).toFixed(2)}%</div>
+            <span
+              className="bg-yellow-400 opacity-95 my-1 absolute top-0 left-1 bottom-0 rounded-sm"
+              style={{ width: `calc((100% - 8px)*${v.bingoRate / 100})` }}
+            />
+          </div>
+          <div className="w-1/12 min-w-[75px] p-1 relative">
+            <div className="relative z-10">{bn(v.winRate).toFixed(2)}%</div>
+            <span
+              className="bg-yellow-400 opacity-95 my-1 absolute top-0 left-1 bottom-0 rounded-sm"
+              style={{ width: `calc((100% - 8px)*${v.winRate / 100})` }}
+            />
+          </div>
+          <div className="w-1/12 min-w-[75px] p-1 relative">
+            <div className="relative z-10">{bn(v.noLoseRate).toFixed(2)}%</div>
+            <span
+              className="bg-yellow-400 opacity-95 my-1 absolute top-0 left-1 bottom-0 rounded-sm"
+              style={{ width: `calc((100% - 8px)*${v.noLoseRate / 100})` }}
+            />
+          </div>
+          <div className="w-1/12 min-w-[75px] p-1">{bn(v.expect).toFixed(2)}元</div>
+          <div className="w-1/12 min-w-[75px] p-1">{v.topPrize}萬元</div>
+          <div className="w-1/12 min-w-[75px] p-1">{v.topCount}張</div>
+          <div className="w-1/6 min-w-[150px] p-1">{v.closeDate}</div>
         </div>
       ))}
     </div>

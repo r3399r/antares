@@ -18,7 +18,7 @@ export const getStats = (
         totalBingo = totalBingo.plus(v.count);
         if (v.prize > data.cost) totalWin = totalWin.plus(v.count);
         if (v.prize >= data.cost) totalNoLose = totalNoLose.plus(v.count);
-        if (v.prize > 5000) product = bn(v.prize).times(0.8).times(v.count).plus(product);
+        if (v.prize > 5000) product = bn(v.prize).times(0.796).times(v.count).plus(product);
         else product = bn(v.prize).times(v.count).plus(product);
         if (v.prize > topPrize) topPrize = v.prize;
       });

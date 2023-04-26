@@ -1,6 +1,6 @@
 {
   "name": "antares-frontend",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "private": true,
   "scripts": {
     "start": "cross-env BROWSER=none PORT=3002 react-scripts start",

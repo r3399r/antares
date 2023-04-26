@@ -2,6 +2,41 @@ import { Instant } from 'src/model/Instant';
 
 export const instants: Instant[] = [
   {
+    id: '4624',
+    topic: '歡樂888',
+    cost: 200,
+    total: 3570000,
+    closeDate: '2023/11/2',
+    structure: [
+      { prize: 1000000, count: 30 },
+      { prize: 88000, count: 88 },
+      { prize: 5000, count: 5032 },
+      { prize: 2000, count: 9985 },
+      { prize: 1500, count: 14279 },
+      { prize: 800, count: 85772 },
+      { prize: 500, count: 99968 },
+      { prize: 300, count: 407002 },
+      { prize: 200, count: 627562 },
+    ],
+  },
+  {
+    id: '4623',
+    topic: '鈔票一把抓',
+    cost: 300,
+    total: 4080000,
+    closeDate: '2023/11/2',
+    structure: [
+      { prize: 3000000, count: 4 },
+      { prize: 100000, count: 20 },
+      { prize: 15000, count: 3243 },
+      { prize: 4500, count: 30718 },
+      { prize: 1500, count: 50638 },
+      { prize: 1000, count: 47300 },
+      { prize: 500, count: 408064 },
+      { prize: 300, count: 971200 },
+    ],
+  },
+  {
     id: '4622',
     topic: '荷包滿滿',
     cost: 100,

@@ -11,15 +11,16 @@ const calculateStats = (instants: Instant[]): InstantStat[] =>
       let totalWin = bn(0);
       let totalNoLose = bn(0);
       let product = bn(0);
-      let topPrize = 0;
-      data.structure.forEach((v) => {
+      let topPrize = bn(0);
+
+      for (const v of data.structure) {
         totalBingo = totalBingo.plus(v.count);
         if (v.prize > data.cost) totalWin = totalWin.plus(v.count);
         if (v.prize >= data.cost) totalNoLose = totalNoLose.plus(v.count);
         if (v.prize > 5000) product = bn(v.prize).times(0.796).times(v.count).plus(product);
         else product = bn(v.prize).times(v.count).plus(product);
-        if (v.prize > topPrize) topPrize = v.prize;
-      });
+        if (topPrize.lt(v.prize)) topPrize = bn(v.prize);
+      }
 
       const bingoRate = totalBingo.div(data.total).times(100).toNumber();
       const winRate = totalWin.div(data.total).times(100).toNumber();
@@ -37,8 +38,8 @@ const calculateStats = (instants: Instant[]): InstantStat[] =>
         winRate,
         noLoseRate,
         expect,
-        topPrize: topPrize / 10000,
-        topCount: data.structure.find((v) => v.prize === topPrize)?.count ?? 0,
+        topPrize: topPrize.div(10000).toNumber(),
+        topCount: data.structure.find((v) => topPrize.eq(v.prize))?.count ?? 0,
         closedAt: format(new Date(data.closedAt), 'yyyy/MM/dd'),
       };
     })

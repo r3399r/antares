@@ -26,6 +26,164 @@ Parameters:
 Conditions: 
   IsProd: !Equals [ !Ref TargetEnvr, prod ]
 Resources:
+  ##############################################
+  ##### API Gateway and associated Lambdas #####
+  ##############################################
+  ServerlessApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: !Sub ${TargetEnvr}
+      EndpointConfiguration: REGIONAL
+      DefinitionBody: {
+          "openapi": "3.0.1",
+          "info": {
+            "version": "2020-01-06T07:45:41Z",
+            "title": !Sub "${Project}-${TargetEnvr}-api"
+          },
+          "paths": {
+            "/api/instant": {
+              "get": {
+                "responses": {
+                  "200": {
+                    "description": "200 response",
+                    "headers": {
+                      "Access-Control-Allow-Origin": {
+                        "schema": {"type": "string"}
+                      }
+                    },
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "$ref": "#/components/schemas/Empty"
+                        }
+                      }
+                    }
+                  }
+                },
+                "x-amazon-apigateway-integration": {
+                  "type": "aws_proxy",
+                  "httpMethod": "POST",
+                  "uri": !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${Project}-${TargetEnvr}-instant/invocations",
+                  "responses": {
+                    "default": {
+                      "statusCode": "200",
+                      "responseParameters": {
+                        "method.response.header.Access-Control-Allow-Origin": "'*'"
+                      }
+                    }
+                  },
+                  "passthroughBehavior": "when_no_match",
+                  "contentHandling": "CONVERT_TO_TEXT"
+                }
+              },
+              "post": {
+                "requestBody": {
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/postInstant"
+                      }
+                    }
+                  },
+                  "required": true
+                },
+                "responses": {
+                  "200": {
+                    "description": "200 response",
+                    "headers": {
+                      "Access-Control-Allow-Origin": {
+                        "schema": {"type": "string"}
+                      }
+                    },
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "$ref": "#/components/schemas/Empty"
+                        }
+                      }
+                    }
+                  }
+                },
+                "x-amazon-apigateway-request-validator" : "Validate body, query string parameters, and headers",
+                "x-amazon-apigateway-integration": {
+                  "type": "aws_proxy",
+                  "httpMethod": "POST",
+                  "uri": !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${Project}-${TargetEnvr}-instant/invocations",
+                  "responses": {
+                    "default": {
+                      "statusCode": "200",
+                      "responseParameters": {
+                        "method.response.header.Access-Control-Allow-Origin": "'*'"
+                      }
+                    }
+                  },
+                  "passthroughBehavior": "when_no_match",
+                  "contentHandling": "CONVERT_TO_TEXT"
+                }
+              }
+            }
+          },
+          "definitions": {
+            "Empty": {
+              "type": "object",
+              "title": "Empty Schema"
+            },
+            "postInstant": {
+              "type": "object",
+              "properties": {
+                "serial": {"type": "string"},
+                "topic": {"type": "string"},
+                "cost": {"type": "number"},
+                "total": {"type": "number"},
+                "releasedAt": {"type": "string"},
+                "closedAt": {"type": "string"},
+                "structure": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "prize": {"type": "number"},
+                      "count": {"type": "number"},
+                    },
+                    "required": ["prize","count"]
+                  }
+                }
+              },
+              "required": ["serial","topic","cost","total","releasedAt","closedAt","structure"]
+            }
+          },
+          "x-amazon-apigateway-request-validators" : {
+            "Validate body, query string parameters, and headers" : {
+              "validateRequestParameters" : true,
+              "validateRequestBody" : true
+            }
+          }
+        }
+  LambdaInstant:
+    Type: AWS::Serverless::Function
+    Properties:
+      Architectures: [arm64]
+      Handler: index.instant
+      Runtime: nodejs18.x
+      FunctionName: !Sub ${Project}-${TargetEnvr}-instant
+      Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/${LambdaExecutionRole}"
+      CodeUri: ../../dist/webpack/lambda
+      MemorySize: 128
+      Environment:
+        Variables:
+          PROJECT: !Sub ${Project}
+          DB_CLUSTER: !Sub '{{resolve:ssm:${TargetEnvr}-db-cluster:1}}'
+          DB_HOST: !Sub '{{resolve:ssm:${TargetEnvr}-db-host:1}}'
+          DB_PWD: !Sub '{{resolve:ssm:${TargetEnvr}-db-pwd:1}}'
+          DB_USER: !Sub '{{resolve:ssm:${TargetEnvr}-db-user:1}}'
+  InvokePermissionInstant:
+    Type: AWS::Lambda::Permission
+    DependsOn: [ServerlessApi, LambdaInstant]
+    Properties:
+      FunctionName: !Sub ${Project}-${TargetEnvr}-instant
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ServerlessApi}/*
   #########################################
   ##### Cloudfront and Route53 config #####
   #########################################
@@ -42,7 +200,7 @@ Resources:
         - DomainName
   CloudFrontDistribution:
     Type: AWS::CloudFront::Distribution
-    DependsOn: [S3Bucket]
+    DependsOn: [ServerlessApi, S3Bucket]
     Properties:
       DistributionConfig:
         Aliases: [!If [IsProd, !Sub '${SubDomain}.${Domain}', !Sub '${SubDomain}-${TargetEnvr}.${Domain}']]
@@ -51,6 +209,14 @@ Resources:
           Id: S3-hosted-website-ID
           CustomOriginConfig:
             OriginProtocolPolicy: http-only
+        - DomainName: !Sub '${ServerlessApi}.execute-api.${AWS::Region}.amazonaws.com'
+          Id: !Sub ${Project}-${TargetEnvr}-ApiEndpoint-ID
+          OriginPath: !Sub /${TargetEnvr}
+          CustomOriginConfig:
+            HTTPPort: 80
+            HTTPSPort: 443
+            OriginKeepaliveTimeout: 5
+            OriginProtocolPolicy: https-only
         Enabled: 'true'
         HttpVersion: http2
         DefaultRootObject: index.html
@@ -61,6 +227,17 @@ Resources:
             QueryString: 'false'
             Cookies:
               Forward: none
+          ViewerProtocolPolicy: redirect-to-https
+          DefaultTTL: 0
+          MinTTL: 0
+          MaxTTL: 0
+        CacheBehaviors:
+        - PathPattern: /api/*
+          AllowedMethods: [ "GET", "HEAD", "OPTIONS", "PUT", "PATCH", "POST", "DELETE"]
+          ForwardedValues:
+            Headers: [ "Authorization", "Accept" ]
+            QueryString: true
+          TargetOriginId: !Sub ${Project}-${TargetEnvr}-ApiEndpoint-ID
           ViewerProtocolPolicy: redirect-to-https
           DefaultTTL: 0
           MinTTL: 0

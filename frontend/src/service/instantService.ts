@@ -1,12 +1,10 @@
-import { instants } from 'src/constant/Instant';
-import { InstantStat } from 'src/model/Instant';
+import { format } from 'date-fns';
+import instantEndpoint from 'src/api/instantEndpoint';
+import { Instant, InstantStat } from 'src/model/Instant';
 import { bn } from 'src/util/bignumber';
 import { compare } from 'src/util/compare';
 
-export const getStats = (
-  sort: keyof InstantStat = 'id',
-  order: 'asc' | 'desc' = 'desc',
-): InstantStat[] =>
+const calculateStats = (instants: Instant[]): InstantStat[] =>
   instants
     .map((data) => {
       let totalBingo = bn(0);
@@ -30,6 +28,7 @@ export const getStats = (
 
       return {
         id: data.id,
+        serial: data.serial,
         topic: data.topic,
         cost: data.cost,
         totalW: Math.floor(data.total / 10000),
@@ -40,7 +39,13 @@ export const getStats = (
         expect,
         topPrize: topPrize / 10000,
         topCount: data.structure.find((v) => v.prize === topPrize)?.count ?? 0,
-        closeDate: data.closeDate,
+        closedAt: format(new Date(data.closedAt), 'yyyy/MM/dd'),
       };
     })
-    .sort(compare(sort, order));
+    .sort(compare('serial', 'desc'));
+
+export const getInstants = async () => {
+  const res = await instantEndpoint.getInstant();
+
+  return calculateStats(res.data);
+};

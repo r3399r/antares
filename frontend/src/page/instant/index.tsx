@@ -1,16 +1,22 @@
 import classNames from 'classnames';
 import { useCallback, useEffect, useState } from 'react';
 import { InstantStat } from 'src/model/Instant';
-import { getStats } from 'src/service/instantService';
+import { getInstants } from 'src/service/instantService';
 import { bn } from 'src/util/bignumber';
+import { compare } from 'src/util/compare';
 
 const Instant = () => {
   const [stats, setStats] = useState<InstantStat[]>();
-  const [sort, setSort] = useState<keyof InstantStat>('id');
+  const [sort, setSort] = useState<keyof InstantStat>('serial');
   const [order, setOrder] = useState<'asc' | 'desc'>('desc');
 
   useEffect(() => {
-    setStats(getStats(sort, order));
+    getInstants().then((res) => setStats(res));
+  }, []);
+
+  useEffect(() => {
+    if (stats === undefined) return;
+    setStats(stats.sort(compare(sort, order)));
   }, [sort, order]);
 
   const click = useCallback(
@@ -30,63 +36,83 @@ const Instant = () => {
       <div className="flex items-center text-center min-w-[1000px] max-w-[1440px] h-[64px] mx-auto bg-red-500 text-yellow-50 font-bold">
         <div
           className="w-1/6 min-w-[150px] h-full cursor-pointer bg-orange-500 flex items-center justify-center sticky left-0 border-r-[1px] border-r-gray-800"
-          onClick={() => click('id')}
+          onClick={() => click('serial')}
         >
-          <div className="p-1">刮刮樂主題{sort === 'id' && <span>↓</span>}</div>
+          <div className="p-1">
+            刮刮樂主題{sort === 'serial' && <span>{order === 'asc' ? '↓' : '↑'}</span>}
+          </div>
         </div>
         <div
           className="w-1/12 min-w-[75px] h-full cursor-pointer bg-orange-500 flex items-center justify-center"
           onClick={() => click('cost')}
         >
-          <div className="p-1">售價{sort === 'cost' && <span>↓</span>}</div>
+          <div className="p-1">
+            售價{sort === 'cost' && <span>{order === 'asc' ? '↓' : '↑'}</span>}
+          </div>
         </div>
         <div
           className="w-1/12 min-w-[150px] h-full cursor-pointer bg-orange-500 flex items-center justify-center"
           onClick={() => click('totalW')}
         >
-          <div className="p-1">發行數量{sort === 'totalW' && <span>↓</span>}</div>
+          <div className="p-1">
+            發行數量{sort === 'totalW' && <span>{order === 'asc' ? '↓' : '↑'}</span>}
+          </div>
         </div>
         <div
           className="w-1/12 min-w-[75px] h-full cursor-pointer bg-orange-900 flex items-center justify-center"
           onClick={() => click('bingoRate')}
         >
-          <div className="p-1">中獎率{sort === 'bingoRate' && <span>↓</span>}</div>
+          <div className="p-1">
+            中獎率{sort === 'bingoRate' && <span>{order === 'asc' ? '↓' : '↑'}</span>}
+          </div>
         </div>
         <div
           className="w-1/12 min-w-[75px] h-full cursor-pointer bg-red-400 flex items-center justify-center"
           onClick={() => click('winRate')}
         >
-          <div className="p-1">勝率{sort === 'winRate' && <span>↓</span>}</div>
+          <div className="p-1">
+            勝率{sort === 'winRate' && <span>{order === 'asc' ? '↓' : '↑'}</span>}
+          </div>
         </div>
         <div
           className="w-1/12 min-w-[75px] h-full cursor-pointer bg-red-400 flex items-center justify-center"
           onClick={() => click('noLoseRate')}
         >
-          <div className="p-1">回本率{sort === 'noLoseRate' && <span>↓</span>}</div>
+          <div className="p-1">
+            回本率{sort === 'noLoseRate' && <span>{order === 'asc' ? '↓' : '↑'}</span>}
+          </div>
         </div>
         <div
           className="w-1/12 min-w-[75px] h-full cursor-pointer bg-red-400 flex items-center justify-center"
           onClick={() => click('expect')}
         >
-          <div className="p-1">每百元期望值{sort === 'expect' && <span>↓</span>}</div>
+          <div className="p-1">
+            每百元期望值{sort === 'expect' && <span>{order === 'asc' ? '↓' : '↑'}</span>}
+          </div>
         </div>
         <div
           className="w-1/12 min-w-[100px] h-full cursor-pointer flex items-center justify-center"
           onClick={() => click('topPrize')}
         >
-          <div className="p-1">頭獎獎金{sort === 'topPrize' && <span>↓</span>}</div>
+          <div className="p-1">
+            頭獎獎金{sort === 'topPrize' && <span>{order === 'asc' ? '↓' : '↑'}</span>}
+          </div>
         </div>
         <div
           className="w-1/12 min-w-[75px] h-full cursor-pointer flex items-center justify-center"
           onClick={() => click('topCount')}
         >
-          <div className="p-1">頭獎數量{sort === 'topCount' && <span>↓</span>}</div>
+          <div className="p-1">
+            頭獎數量{sort === 'topCount' && <span>{order === 'asc' ? '↓' : '↑'}</span>}
+          </div>
         </div>
         <div
           className="w-1/6 min-w-[150px] h-full cursor-pointer flex items-center justify-center"
-          onClick={() => click('closeDate')}
+          onClick={() => click('closedAt')}
         >
-          <div className="p-1">下市日{sort === 'closeDate' && <span>↓</span>}</div>
+          <div className="p-1">
+            下市日{sort === 'closedAt' && <span>{order === 'asc' ? '↓' : '↑'}</span>}
+          </div>
         </div>
       </div>
       {stats?.map((v, i) => (
@@ -139,7 +165,7 @@ const Instant = () => {
           <div className="w-1/12 min-w-[75px] p-1">{bn(v.expect).toFixed(2)}元</div>
           <div className="w-1/12 min-w-[100px] p-1">{v.topPrize}萬元</div>
           <div className="w-1/12 min-w-[75px] p-1">{v.topCount}張</div>
-          <div className="w-1/6 min-w-[150px] p-1">{v.closeDate}</div>
+          <div className="w-1/6 min-w-[150px] p-1">{v.closedAt}</div>
         </div>
       ))}
     </div>

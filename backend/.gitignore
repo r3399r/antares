@@ -1,1 +1,13 @@
+# Dependency directories
+node_modules/
+
+# Built files
+dist
+lib
+
+# test files
+tmp
+coverage
+
+# aws
 packaged.yaml

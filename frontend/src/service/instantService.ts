@@ -15,9 +15,9 @@ const calculateStats = (instants: Instant[]): InstantStat[] =>
 
       for (const v of data.structure) {
         totalBingo = totalBingo.plus(v.count);
-        if (v.prize > data.cost) totalWin = totalWin.plus(v.count);
-        if (v.prize >= data.cost) totalNoLose = totalNoLose.plus(v.count);
-        if (v.prize > 5000) product = bn(v.prize).times(0.796).times(v.count).plus(product);
+        if (bn(v.prize).gt(data.cost)) totalWin = totalWin.plus(v.count);
+        if (bn(v.prize).gte(data.cost)) totalNoLose = totalNoLose.plus(v.count);
+        if (bn(v.prize).gt(5000)) product = bn(v.prize).times(0.796).times(v.count).plus(product);
         else product = bn(v.prize).times(v.count).plus(product);
         if (topPrize.lt(v.prize)) topPrize = bn(v.prize);
       }
@@ -32,8 +32,8 @@ const calculateStats = (instants: Instant[]): InstantStat[] =>
         serial: data.serial,
         topic: data.topic,
         cost: data.cost,
-        totalW: Math.floor(data.total / 10000),
-        totalR: data.total % 10000,
+        totalW: bn(data.total).div(10000).dp(0, 1).toNumber(),
+        totalR: bn(data.total).mod(10000).dp(0).toNumber(),
         bingoRate,
         winRate,
         noLoseRate,

@@ -1,0 +1,22 @@
+{
+    "id": "4619",
+    "topic": "一路發",
+    "cost": 200,
+    "total": 3570000,
+    "releasedAt": "2023-04-07T00:00:00.000Z",
+    "closedAt": "2023-10-11T00:00:00.000Z",
+    "structure": [
+      { "prize": 2000000, "count": 4 },
+      { "prize": 80000, "count": 10 },
+      { "prize": 16000, "count": 72 },
+      { "prize": 8000, "count": 624 },
+      { "prize": 2000, "count": 11455 },
+      { "prize": 1600, "count": 54236 },
+      { "prize": 1000, "count": 71363 },
+      { "prize": 800, "count": 76799 },
+      { "prize": 500, "count": 25702 },
+      { "prize": 300, "count": 257027 },
+      { "prize": 200, "count": 582617 }
+    ]
+  }
+  

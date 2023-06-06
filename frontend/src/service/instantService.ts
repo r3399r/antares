@@ -1,5 +1,5 @@
 import { format } from 'date-fns';
-import instantEndpoint from 'src/api/instantEndpoint';
+import instants from 'src/constant/Instant.json';
 import { Instant, InstantStat } from 'src/model/Instant';
 import { bn } from 'src/util/bignumber';
 import { compare } from 'src/util/compare';
@@ -29,7 +29,6 @@ const calculateStats = (instants: Instant[]): InstantStat[] =>
 
       return {
         id: data.id,
-        serial: data.serial,
         topic: data.topic,
         cost: data.cost,
         totalW: bn(data.total).div(10000).dp(0, 1).toNumber(),
@@ -43,10 +42,6 @@ const calculateStats = (instants: Instant[]): InstantStat[] =>
         closedAt: format(new Date(data.closedAt), 'yyyy/MM/dd'),
       };
     })
-    .sort(compare('serial', 'desc'));
+    .sort(compare('id', 'desc'));
 
-export const getInstants = async () => {
-  const res = await instantEndpoint.getInstant();
-
-  return calculateStats(res.data);
-};
+export const getInstants = async () => calculateStats(instants as Instant[]);

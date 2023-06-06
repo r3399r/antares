@@ -7,7 +7,7 @@ import { compare } from 'src/util/compare';
 
 const Instant = () => {
   const [stats, setStats] = useState<InstantStat[]>();
-  const [sort, setSort] = useState<keyof InstantStat>('serial');
+  const [sort, setSort] = useState<keyof InstantStat>('id');
   const [order, setOrder] = useState<'asc' | 'desc'>('desc');
 
   useEffect(() => {
@@ -16,7 +16,7 @@ const Instant = () => {
 
   useEffect(() => {
     if (stats === undefined) return;
-    setStats(stats.sort(compare(sort, order)));
+    setStats([...stats].sort(compare(sort, order)));
   }, [sort, order]);
 
   const click = useCallback(
@@ -36,10 +36,10 @@ const Instant = () => {
       <div className="flex items-center text-center min-w-[1000px] max-w-[1440px] h-[64px] mx-auto bg-red-500 text-yellow-50 font-bold">
         <div
           className="w-1/6 min-w-[150px] h-full cursor-pointer bg-orange-500 flex items-center justify-center sticky left-0 border-r-[1px] border-r-gray-800"
-          onClick={() => click('serial')}
+          onClick={() => click('id')}
         >
           <div className="p-1">
-            刮刮樂主題{sort === 'serial' && <span>{order === 'asc' ? '↓' : '↑'}</span>}
+            刮刮樂主題{sort === 'id' && <span>{order === 'asc' ? '↓' : '↑'}</span>}
           </div>
         </div>
         <div

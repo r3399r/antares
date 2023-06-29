@@ -1,0 +1,23 @@
+{
+    "id": "4631",
+    "topic": "獎金倍倍樂",
+    "cost": 200,
+    "total": 3516000,
+    "releasedAt": "2023-07-04T00:00:00.000Z",
+    "closedAt": "2023-12-29T00:00:00.000Z",
+    "structure": [
+      { "prize": 2000000, "count": 3 },
+      { "prize": 50000, "count": 30 },
+      { "prize": 10000, "count": 71},
+      { "prize": 5000, "count": 1081 },
+      { "prize": 3000, "count": 2120 },
+      { "prize": 2500, "count": 3791 },
+      { "prize": 2000, "count": 4204 },
+      { "prize": 1500, "count": 28114 },
+      { "prize": 1000, "count": 158990 },
+      { "prize": 500, "count": 33711 },
+      { "prize": 300, "count": 295342 },
+      { "prize": 200, "count": 562595 }
+    ]
+  }
+  

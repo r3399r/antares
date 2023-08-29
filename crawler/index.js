@@ -1,5 +1,6 @@
 const axios = require("axios");
 const cheerio = require("cheerio");
+const fs = require('fs');
 
 const getDetails = async (id, url) => {
     const pageHTML = await axios.get(url)
@@ -8,14 +9,12 @@ const getDetails = async (id, url) => {
     const structure = []
     let total
 
-    const topic =$(`#${id}`).parent().next().text().split('\n')[0].split('：')[1]
+    const topic = $(`#${id}`).parent().next().text().split('\n')[0].split('：')[1]
 
     const table = $(`#${id}`).parent().siblings('.tableD').children().children()
     const length = $(table).length
     $(table).each((index, element) => {
         $('td', element).each((i, e) => {
-            console.log(e.type,e.nextSibling.type)
-        // if (e.type !== 'tag' || e.nextSibling.type !== 'tag') return;
             if (index !== 0 && index !== length - 1) {
                 if (i % 2 === 0 && $(e).text().trim() !== '') {
                     const prize = Number($(e).text().split('NT$')[1].replace(/\,/g, ''))
@@ -23,15 +22,14 @@ const getDetails = async (id, url) => {
                     structure.push({ prize, count })
                 }
             }
-            if(index===length-1){
-                if(i===1){
-                    total=Number($(e).text().replace(/\,/g,''))
+            if (index === length - 1) {
+                if (i === 1) {
+                    total = Number($(e).text().replace(/\,/g, ''))
                 }
             }
         })
     })
-    console.log(id,topic,total, structure)
-    return structure
+    return { topic, total, structure }
 }
 
 const main = async () => {
@@ -42,14 +40,14 @@ const main = async () => {
     const tempResult = []
 
     $('.tableFull tbody tr').each((index, element) => {
-      if (element.type !== 'tag') return;
+        if (element.type !== 'tag') return;
 
         let price
         let releaseDate
         let closeDate
         if ((index - 1) % 4 === 0) {
             $('td', element).each((i, e) => {
-                if (i === 1) price = $(e).text()
+                if (i === 1) price = Number($(e).text().replace(/\,/g, ''))
                 if (i === 3) {
                     const tmpRelease = $(e).text()
                     const [year, month, day] = tmpRelease.split('/')
@@ -66,7 +64,7 @@ const main = async () => {
             const url = $('a', element.nextSibling).attr('href')
             const id = url.split('#')[1]
             tempResult.push({
-                id, price, releaseDate, closeDate, url
+                id, price, releasedAt: releaseDate.toISOString(), closedAt: closeDate.toISOString(), url
             })
         }
     })
@@ -74,10 +72,12 @@ const main = async () => {
     const result = []
     for (const i of tempResult) {
         const res = await getDetails(i.id, i.url)
-        result.push({ ...i, structure: res })
+        const { url, ...rest } = i
+        result.push({ ...rest, ...res })
     }
 
-    console.log(result)
+    const filename = '../frontend/src/constant/Instant.json'
+    fs.writeFileSync(filename, JSON.stringify(result), { encoding: 'utf8', flag: 'w' })
 }
 
 main()

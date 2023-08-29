@@ -69,7 +69,7 @@ Resources:
   S3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub ${Project}-${TargetEnvr}
+      BucketName: !Sub ${Project}-${TargetEnvr}-y
       WebsiteConfiguration:
         ErrorDocument: index.html
         IndexDocument: index.html

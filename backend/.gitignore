@@ -1,2 +1,5 @@
-packaged.yaml
 node_modules
+lib
+dist
+tmp
+packaged.yaml

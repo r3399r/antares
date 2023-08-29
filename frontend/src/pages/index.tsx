@@ -3,8 +3,6 @@ import { getInstants } from '@/service/instantService';
 import { bn } from '@/util/bignumber';
 import { compare } from '@/util/compare';
 import classNames from 'classnames';
-import Head from 'next/head';
-import Script from 'next/script';
 import { useCallback, useEffect, useState } from 'react';
 
 const Home = () => {
@@ -31,27 +29,6 @@ const Home = () => {
 
   return (
     <>
-      <Head>
-        <title>刮刮樂資訊</title>
-        <meta name="description" content="刮刮樂機率全分析，尋找最適合入手的刮刮樂" />
-      </Head>
-      <Script async src="https://www.googletagmanager.com/gtag/js?id=G-WS0TN7G1EE" />
-      <Script id="google-analytics">
-        {`
-          window.dataLayer = window.dataLayer || [];
-          function gtag() {
-            dataLayer.push(arguments);
-          }
-          gtag('js', new Date());
-    
-          gtag('config', 'G-WS0TN7G1EE');
-        `}
-      </Script>
-      <Script
-        async
-        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8632821351669245"
-        crossOrigin="anonymous"
-      />
       <div className="min-h-screen overflow-x-auto bg-red-700 py-5">
         <div className="mx-auto flex h-[64px] min-w-[1000px] max-w-[1440px] items-center bg-red-500 text-center font-bold text-yellow-50">
           <div

@@ -1,8 +1,8 @@
+import { Instant, InstantStat } from '@/model/Instant';
+import { bn } from '@/util/bignumber';
+import { compare } from '@/util/compare';
 import { format } from 'date-fns';
-import instants from 'src/constant/Instant.json';
-import { Instant, InstantStat } from 'src/model/Instant';
-import { bn } from 'src/util/bignumber';
-import { compare } from 'src/util/compare';
+import instants from '@/constant/Instant.json';
 
 const calculateStats = (instants: Instant[]): InstantStat[] =>
   instants
@@ -15,8 +15,8 @@ const calculateStats = (instants: Instant[]): InstantStat[] =>
 
       for (const v of data.structure) {
         totalBingo = totalBingo.plus(v.count);
-        if (bn(v.prize).gt(data.cost)) totalWin = totalWin.plus(v.count);
-        if (bn(v.prize).gte(data.cost)) totalNoLose = totalNoLose.plus(v.count);
+        if (bn(v.prize).gt(data.price)) totalWin = totalWin.plus(v.count);
+        if (bn(v.prize).gte(data.price)) totalNoLose = totalNoLose.plus(v.count);
         if (bn(v.prize).gt(5000)) product = bn(v.prize).times(0.796).times(v.count).plus(product);
         else product = bn(v.prize).times(v.count).plus(product);
         if (topPrize.lt(v.prize)) topPrize = bn(v.prize);
@@ -25,12 +25,12 @@ const calculateStats = (instants: Instant[]): InstantStat[] =>
       const bingoRate = totalBingo.div(data.total).times(100).toNumber();
       const winRate = totalWin.div(data.total).times(100).toNumber();
       const noLoseRate = totalNoLose.div(data.total).times(100).toNumber();
-      const expect = product.div(data.total).div(data.cost).times(100).toNumber();
+      const expect = product.div(data.total).div(data.price).times(100).toNumber();
 
       return {
         id: data.id,
         topic: data.topic,
-        cost: data.cost,
+        price: data.price,
         totalW: bn(data.total).div(10000).dp(0, 1).toNumber(),
         totalR: bn(data.total).mod(10000).dp(0).toNumber(),
         bingoRate,
@@ -44,4 +44,4 @@ const calculateStats = (instants: Instant[]): InstantStat[] =>
     })
     .sort(compare('id', 'desc'));
 
-export const getInstants = async () => calculateStats(instants as Instant[]);
+export const getInstants = () => calculateStats(instants as Instant[]);

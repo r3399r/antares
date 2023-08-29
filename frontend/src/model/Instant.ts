@@ -1,7 +1,7 @@
 export type Instant = {
   id: string;
   topic: string;
-  cost: number;
+  price: number;
   total: number;
   releasedAt: string;
   closedAt: string;
@@ -11,7 +11,7 @@ export type Instant = {
 export type InstantStat = {
   id: string;
   topic: string;
-  cost: number;
+  price: number;
   totalW: number;
   totalR: number;
   bingoRate: number;

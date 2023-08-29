@@ -1,0 +1,21 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - sudo apt-get update
+      - sudo apt-get dist-upgrade -y
+      - cd crawler
+      - npm install
+      - cd ../frontend
+      - npm install
+      - cd ..
+  build:
+    commands:
+      - aws cloudformation package --template-file aws/cloudformation/template.yaml --output-template-file packaged.yaml --s3-bucket y-cf-midway-singapore
+      - aws cloudformation deploy --template-file packaged.yaml --stack-name $PROJECT-$ENV-stack --parameter-overrides TargetEnvr=$ENV Project=$PROJECT SubDomain=$SUB_DOMAIN Domain=$DOMAIN --no-fail-on-empty-changeset --s3-bucket y-cf-midway-singapore --capabilities CAPABILITY_NAMED_IAM
+      - cd ./crawler
+      - node index.js
+      - cd ../frontend
+      - npm run build
+      - aws s3 sync ./out s3://$PROJECT-$ENV --delete --cache-control no-cache

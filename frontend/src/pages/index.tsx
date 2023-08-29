@@ -3,6 +3,7 @@ import { getInstants } from '@/service/instantService';
 import { bn } from '@/util/bignumber';
 import { compare } from '@/util/compare';
 import classNames from 'classnames';
+import Head from 'next/head';
 import { useCallback, useEffect, useState } from 'react';
 
 const Home = () => {
@@ -29,6 +30,14 @@ const Home = () => {
 
   return (
     <>
+      <Head>
+        <title>刮刮樂資訊</title>
+        <meta name="description" content="刮刮樂機率全分析，尋找最適合入手的刮刮樂" />
+        <meta
+          name="google-site-verification"
+          content="VZYlmjm2nQXB01Ifn3vwk9X9z0b9wWCC7glkeOpWZlg"
+        />
+      </Head>
       <div className="min-h-screen overflow-x-auto bg-red-700 py-5">
         <div className="mx-auto flex h-[64px] min-w-[1000px] max-w-[1440px] items-center bg-red-500 text-center font-bold text-yellow-50">
           <div

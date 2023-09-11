@@ -4,17 +4,13 @@ import { bn } from '@/util/bignumber';
 import { compare } from '@/util/compare';
 import classNames from 'classnames';
 import Head from 'next/head';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 const Home = () => {
-  const [stats, setStats] = useState<InstantStat[]>(getInstants());
   const [sort, setSort] = useState<keyof InstantStat>('id');
   const [order, setOrder] = useState<'asc' | 'desc'>('desc');
 
-  useEffect(() => {
-    if (stats === undefined) return;
-    setStats([...stats].sort(compare(sort, order)));
-  }, [sort, order]);
+  const stats = useMemo(() => getInstants().sort(compare(sort, order)), [sort, order]);
 
   const click = useCallback(
     (key: keyof InstantStat) => {

@@ -32,12 +32,12 @@ const getDetails = async (id, url) => {
     return { topic, total, structure }
 }
 
-const main = async () => {
+const getOverall = async () => {
     const listPage = 'https://www.taiwanlottery.com.tw/info/instant/sale.aspx'
     const pageHTML = await axios.get(listPage)
     const $ = cheerio.load(pageHTML.data)
 
-    const tempResult = []
+    const result = []
 
     $('.tableFull tbody tr').each((index, element) => {
         if (element.type !== 'tag') return;
@@ -63,17 +63,34 @@ const main = async () => {
         if (closeDate > Date.now()) {
             const url = $('a', element.nextSibling).attr('href')
             const id = url.split('#')[1]
-            tempResult.push({
+            result.push({
                 id, price, releasedAt: releaseDate.toISOString(), closedAt: closeDate.toISOString(), url
             })
         }
     })
 
+    return result
+}
+
+const main = async () => {
     const result = []
-    for (const i of tempResult) {
-        const res = await getDetails(i.id, i.url)
-        const { url, ...rest } = i
-        result.push({ ...rest, ...res })
+
+    let count = 0;
+    const maxTries = 3;
+    while (true) {
+        try {
+            const tempResult = await getOverall()
+
+            for (const i of tempResult) {
+                const res = await getDetails(i.id, i.url)
+                const { url, ...rest } = i
+                result.push({ ...rest, ...res })
+            }
+            break;
+        } catch (e) {
+            console.log('tries:', count)
+            if (count++ === maxTries) throw e;
+        }
     }
 
     const filename = '../frontend/src/constant/Instant.json'

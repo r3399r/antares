@@ -4,6 +4,7 @@ import { bn } from '@/util/bignumber';
 import { compare } from '@/util/compare';
 import classNames from 'classnames';
 import Head from 'next/head';
+import Link from 'next/link';
 import { useCallback, useMemo, useState } from 'react';
 
 const Home = () => {
@@ -27,7 +28,7 @@ const Home = () => {
   return (
     <>
       <Head>
-        <title>刮刮樂資訊</title>
+        <title>刮刮樂機率分析</title>
         <meta name="description" content="刮刮樂機率全分析，尋找最適合入手的刮刮樂" />
         <meta
           name="google-site-verification"
@@ -170,6 +171,24 @@ const Home = () => {
             <div className="w-1/6 min-w-[150px] p-1">{v.closedAt}</div>
           </div>
         ))}
+        <div className="mx-6 mt-4 rounded-2xl bg-yellow-50 px-10 py-4">
+          <h1>刮刮樂機率分析</h1>
+          <p>點擊標頭可以排序，尋找最符合自己需求的刮刮樂。</p>
+          <p>
+            中獎率：刮出獎金的機率
+            <br />
+            勝率：刮出獎金大於遊戲售價的機率
+            <br />
+            回本率：刮出獎金大於或等於遊戲售價的機率
+            <br />
+            期望值：平均一張刮刮樂可獲得之獎金
+          </p>
+          <p>此網頁自動於每週五 17:30 至台灣彩券官網取得最新資料並更新。</p>
+          <Link href="https://github.com/r3399r/antares" target="_blank">
+            Github
+          </Link>
+          <p className="text-center">Copyright © 2022 Celestial Studio</p>
+        </div>
       </div>
     </>
   );

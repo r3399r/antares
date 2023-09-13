@@ -28,7 +28,7 @@ export default function Document() {
           id="gadsense-script"
           strategy="beforeInteractive"
           crossOrigin="anonymous"
-          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8632821351669245`}
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3051999847338334`}
         />
       </Head>
       <body>

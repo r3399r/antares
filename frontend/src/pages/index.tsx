@@ -52,9 +52,9 @@ const Home = () => {
       </Head>
       <div>
         <div className="mb-[22px] mt-10 overflow-x-auto pb-2">
-          <div className="flex min-w-[1165px] text-center font-semibold text-white">
+          <div className="flex min-w-[1145px] text-center font-semibold text-white">
             <div
-              className="sticky left-0 box-border flex h-full w-1/6 min-w-[150px] cursor-pointer items-center justify-center border-0 border-r border-solid border-r-brown bg-persimmon px-1 py-5"
+              className="sticky left-0 box-border flex h-full w-1/6 min-w-[130px] cursor-pointer items-center justify-center border-0 border-r border-solid border-r-brown bg-persimmon px-1 py-5"
               onClick={() => click('id')}
             >
               <div>刮刮樂主題</div>
@@ -127,14 +127,14 @@ const Home = () => {
           {stats?.map((v, i) => (
             <div
               key={v.id}
-              className={classNames('flex min-w-[1165px] text-center text-brown', {
+              className={classNames('flex min-w-[1145px] text-center text-brown', {
                 'bg-yellow': i % 2 === 0,
                 'bg-white': i % 2 === 1,
               })}
             >
               <div
                 className={classNames(
-                  'sticky left-0 z-20 box-border w-1/6 min-w-[150px] border-0 border-r border-solid border-r-brown px-1 py-2 font-semibold',
+                  'sticky left-0 z-20 box-border w-1/6 min-w-[130px] border-0 border-r border-solid border-r-brown px-1 py-2 font-semibold',
                   {
                     'bg-yellow': i % 2 === 0,
                     'bg-white': i % 2 === 1,
@@ -182,7 +182,7 @@ const Home = () => {
           ))}
         </div>
         <div className="bg-honey p-10">
-          <div className="box-border bg-white px-[60px] py-10">
+          <div className="box-border bg-white px-8 py-6 sm:px-[60px] sm:py-10">
             <div className="flex items-center gap-4">
               <Image src={IcLogo} alt="logo" />
               <h1 className="text-4xl font-bold">刮刮樂機率分析</h1>

@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  margin: 0;
+html {
+  background: theme(colors.orange);
+  color: theme(colors.brown);
+  font-size: 16px;
 }

@@ -31,6 +31,7 @@ const calculateStats = (instants: Instant[]): InstantStat[] =>
         id: data.id,
         topic: data.topic,
         price: data.price,
+        total: data.total,
         totalW: bn(data.total).div(10000).dp(0, 1).toNumber(),
         totalR: bn(data.total).mod(10000).dp(0).toNumber(),
         bingoRate,
@@ -40,6 +41,8 @@ const calculateStats = (instants: Instant[]): InstantStat[] =>
         topPrize: topPrize.div(10000).toNumber(),
         topCount: data.structure.find((v) => topPrize.eq(v.prize))?.count ?? 0,
         closedAt: format(new Date(data.closedAt), 'yyyy/MM/dd'),
+        releasedAt: format(new Date(data.releasedAt), 'yyyy/MM/dd'),
+        structure: data.structure,
       };
     })
     .sort(compare('id', 'desc'));

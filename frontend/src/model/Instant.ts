@@ -13,6 +13,7 @@ export type InstantStat = {
   topic: string;
   price: number;
   totalW: number;
+  total: number;
   totalR: number;
   bingoRate: number;
   winRate: number;
@@ -20,5 +21,7 @@ export type InstantStat = {
   expect: number;
   topPrize: number;
   topCount: number;
+  releasedAt: string;
   closedAt: string;
+  structure: { prize: number; count: number }[];
 };

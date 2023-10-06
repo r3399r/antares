@@ -1,6 +1,6 @@
 import { InstantStat } from '@/model/Instant';
 import { getInstants } from '@/service/instantService';
-import { bn } from '@/util/bignumber';
+import { bn, bnFormat } from '@/util/bignumber';
 import { compare } from '@/util/compare';
 import classNames from 'classnames';
 import Head from 'next/head';
@@ -11,12 +11,15 @@ import IcSortDesc from '@/images/ic-sort-desc.svg';
 import IcSort from '@/images/ic-sort.svg';
 import { useCallback, useMemo, useState } from 'react';
 import Image from 'next/image';
+import { Modal } from '@mui/material';
 
 const Home = () => {
   const [sort, setSort] = useState<keyof InstantStat>('id');
   const [order, setOrder] = useState<'asc' | 'desc'>('desc');
+  const [openIdx, setOpenIdx] = useState<number>();
 
   const stats = useMemo(() => getInstants().sort(compare(sort, order)), [sort, order]);
+  const target = useMemo(() => (openIdx !== undefined ? stats[openIdx] : null), [stats, openIdx]);
 
   const click = useCallback(
     (key: keyof InstantStat) => {
@@ -52,77 +55,71 @@ const Home = () => {
       </Head>
       <div>
         <div className="mb-[22px] mt-10 overflow-x-auto pb-2">
-          <div className="flex min-w-[1145px] text-center font-semibold text-white">
+          <div className="flex min-w-[1145px] bg-red text-center font-bold text-white">
             <div
-              className="sticky left-0 box-border flex h-full w-1/6 min-w-[130px] cursor-pointer items-center justify-center border-0 border-r border-solid border-r-brown bg-persimmon px-1 py-5"
+              className="sticky left-0 box-border flex h-full w-[10%] min-w-[130px] cursor-pointer items-center justify-center bg-persimmon px-1 py-5"
               onClick={() => click('id')}
             >
               <div>刮刮樂主題</div>
               <Image src={sortingImage('id')} alt="sort" />
             </div>
             <div
-              className="box-border flex h-full w-1/12 min-w-[75px] cursor-pointer items-center justify-center bg-persimmon px-1 py-5"
+              className="box-border flex h-full w-[10%] min-w-[75px] cursor-pointer items-center justify-center bg-persimmon px-1 py-5"
               onClick={() => click('price')}
             >
               <div>售價</div>
               <Image src={sortingImage('price')} alt="sort" />
             </div>
             <div
-              className="box-border flex h-full w-1/12 min-w-[150px] cursor-pointer items-center justify-center bg-persimmon px-1 py-5"
+              className="box-border flex h-full w-[10%] min-w-[150px] cursor-pointer items-center justify-center bg-persimmon px-1 py-5"
               onClick={() => click('totalW')}
             >
               <div>發行數量</div>
               <Image src={sortingImage('totalW')} alt="sort" />
             </div>
             <div
-              className="box-border flex h-full w-1/12 min-w-[100px] cursor-pointer items-center justify-center bg-plum px-1 py-5"
+              className="box-border flex h-full w-[10%] min-w-[100px] cursor-pointer items-center justify-center bg-plum px-1 py-5"
               onClick={() => click('bingoRate')}
             >
               <div>中獎率</div>
               <Image src={sortingImage('bingoRate')} alt="sort" />
             </div>
             <div
-              className="box-border flex h-full w-1/12 min-w-[100px] cursor-pointer items-center justify-center bg-coral px-1 py-5"
+              className="box-border flex h-full w-[10%] min-w-[100px] cursor-pointer items-center justify-center bg-coral px-1 py-5"
               onClick={() => click('winRate')}
             >
               <div>勝率</div>
               <Image src={sortingImage('winRate')} alt="sort" />
             </div>
             <div
-              className="box-border flex h-full w-1/12 min-w-[100px] cursor-pointer items-center justify-center bg-coral px-1 py-5"
+              className="box-border flex h-full w-[10%] min-w-[100px] cursor-pointer items-center justify-center bg-coral px-1 py-5"
               onClick={() => click('noLoseRate')}
             >
               <div>回本率</div>
               <Image src={sortingImage('noLoseRate')} alt="sort" />
             </div>
             <div
-              className="box-border flex h-full w-1/12 min-w-[140px] cursor-pointer items-center justify-center bg-coral px-1 py-5"
+              className="box-border flex h-full w-[10%] min-w-[140px] cursor-pointer items-center justify-center bg-coral px-1 py-5"
               onClick={() => click('expect')}
             >
               <div>每百元期望值</div>
               <Image src={sortingImage('expect')} alt="sort" />
             </div>
             <div
-              className="box-border flex h-full w-1/12 min-w-[100px] cursor-pointer items-center justify-center bg-red px-1 py-5"
+              className="box-border flex h-full w-[10%] min-w-[100px] cursor-pointer items-center justify-center bg-red px-1 py-5"
               onClick={() => click('topPrize')}
             >
               <div>頭獎獎金</div>
               <Image src={sortingImage('topPrize')} alt="sort" />
             </div>
             <div
-              className="box-border flex h-full w-1/12 min-w-[100px] cursor-pointer items-center justify-center bg-red px-1 py-5"
+              className="box-border flex h-full w-[10%] min-w-[100px] cursor-pointer items-center justify-center bg-red px-1 py-5"
               onClick={() => click('topCount')}
             >
               <div>頭獎數量</div>
               <Image src={sortingImage('topCount')} alt="sort" />
             </div>
-            <div
-              className="box-border flex h-full w-1/6 min-w-[150px] cursor-pointer items-center justify-center bg-red px-1 py-5"
-              onClick={() => click('closedAt')}
-            >
-              <div>下市日</div>
-              <Image src={sortingImage('closedAt')} alt="sort" />
-            </div>
+            <div className="box-border h-full w-[10%] min-w-[150px]"></div>
           </div>
           {stats?.map((v, i) => (
             <div
@@ -134,7 +131,7 @@ const Home = () => {
             >
               <div
                 className={classNames(
-                  'sticky left-0 z-20 box-border w-1/6 min-w-[130px] border-0 border-r border-solid border-r-brown px-1 py-2 font-semibold',
+                  'sticky left-0 z-20 box-border w-[10%] min-w-[130px] px-1 py-2 font-bold',
                   {
                     'bg-yellow': i % 2 === 0,
                     'bg-white': i % 2 === 1,
@@ -143,41 +140,46 @@ const Home = () => {
               >
                 {v.topic}
               </div>
-              <div className="box-border w-1/12 min-w-[75px] px-1 py-2">{v.price}元</div>
-              <div className="box-border w-1/12 min-w-[150px] px-1 py-2">
+              <div className="box-border w-[10%] min-w-[75px] px-1 py-2">${v.price}</div>
+              <div className="box-border w-[10%] min-w-[150px] px-1 py-2">
                 {v.totalW}萬{v.totalR === 0 ? '' : v.totalR}張
               </div>
-              <div className="relative box-border w-1/12 min-w-[100px] px-1 py-2">
+              <div className="relative box-border w-[10%] min-w-[100px] px-1 py-2">
                 <div className="relative z-10">{bn(v.bingoRate).toFixed(2)}%</div>
                 <span
                   className="absolute inset-y-0 left-1 my-1 rounded-sm bg-gold"
                   style={{ width: `calc((100% - 8px)*${v.bingoRate / 100})` }}
                 />
               </div>
-              <div className="relative box-border w-1/12 min-w-[100px] px-1 py-2">
+              <div className="relative box-border w-[10%] min-w-[100px] px-1 py-2">
                 <div className="relative z-10">{bn(v.winRate).toFixed(2)}%</div>
                 <span
                   className="absolute inset-y-0 left-1 my-1 rounded-sm bg-gold"
                   style={{ width: `calc((100% - 8px)*${v.winRate / 50})` }}
                 />
               </div>
-              <div className="relative box-border w-1/12 min-w-[100px] px-1 py-2">
+              <div className="relative box-border w-[10%] min-w-[100px] px-1 py-2">
                 <div className="relative z-10">{bn(v.noLoseRate).toFixed(2)}%</div>
                 <span
                   className="absolute inset-y-0 left-1 my-1 rounded-sm bg-gold"
                   style={{ width: `calc((100% - 8px)*${v.noLoseRate / 100})` }}
                 />
               </div>
-              <div className="relative box-border w-1/12 min-w-[140px] px-1 py-2">
-                <div className="relative z-10">{bn(v.expect).toFixed(2)}元</div>
+              <div className="relative box-border w-[10%] min-w-[140px] px-1 py-2">
+                <div className="relative z-10">${bn(v.expect).toFixed(2)}</div>
                 <span
                   className="absolute inset-y-0 left-1 my-1 rounded-sm bg-gold"
                   style={{ width: `calc((100% - 8px)*${v.expect / 100})` }}
                 />
               </div>
-              <div className="box-border w-1/12 min-w-[100px] px-1 py-2">{v.topPrize}萬元</div>
-              <div className="box-border w-1/12 min-w-[100px] px-1 py-2">{v.topCount}張</div>
-              <div className="box-border w-1/6 min-w-[150px] px-1 py-2">{v.closedAt}</div>
+              <div className="box-border w-[10%] min-w-[100px] px-1 py-2">${v.topPrize}萬</div>
+              <div className="box-border w-[10%] min-w-[100px] px-1 py-2">{v.topCount}張</div>
+              <div
+                className="box-border w-[10%] min-w-[150px] px-1 py-2"
+                onClick={() => setOpenIdx(i)}
+              >
+                <div className="cursor-pointer text-weissbier underline">點我看更多</div>
+              </div>
             </div>
           ))}
         </div>
@@ -209,6 +211,59 @@ const Home = () => {
           <p className="mt-4 text-center text-sm">Copyright © 2022 Celestial Studio</p>
         </div>
       </div>
+      <Modal open={openIdx !== undefined} onClose={() => setOpenIdx(undefined)}>
+        <div className="absolute left-1/2 top-1/2 max-h-[calc(100vh-140px)] w-[640px] max-w-[calc(100vw-30px)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl bg-white p-5 outline-none">
+          <h2 className="text-3xl font-bold">{target?.topic}</h2>
+          <div className="mt-4 flex flex-col gap-2">
+            <p>
+              <b>發行日：</b>
+              {target?.releasedAt}
+            </p>
+            <p>
+              <b>下市日：</b>
+              {target?.closedAt}
+            </p>
+            <p>
+              <b>
+                獎金結構：
+                <b />
+              </b>
+            </p>
+            <div>
+              <div className="flex bg-orange p-2 text-center font-bold text-white">
+                <div className="w-1/3">獎項</div>
+                <div className="w-1/3">張數</div>
+                <div className="w-1/3">機率</div>
+              </div>
+              {target?.structure.sort(compare('prize', 'desc')).map((v, i) => (
+                <div
+                  key={i}
+                  className={classNames('flex text-center', {
+                    'bg-yellow': i % 2 === 0,
+                    'bg-white': i % 2 === 1,
+                  })}
+                >
+                  <div className="w-1/3 px-1 py-2">${bnFormat(v.prize)}</div>
+                  <div className="w-1/3 px-1 py-2">{bnFormat(v.count)}</div>
+                  <div className="relative w-1/3 px-1 py-2">
+                    <div className="relative z-10">
+                      {bn(v.count).div(target.total).times(100).toFixed(7)}%
+                    </div>
+                    <span
+                      className="absolute inset-y-0 left-1 my-1 rounded-sm bg-gold"
+                      style={{
+                        width: `calc((100% - 8px)*${bn(Math.log(v.count))
+                          .div(Math.log(target.total))
+                          .toNumber()})`,
+                      }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </Modal>
     </>
   );
 };

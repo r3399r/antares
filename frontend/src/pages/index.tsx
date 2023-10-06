@@ -230,7 +230,7 @@ const Home = () => {
               </b>
             </p>
             <div>
-              <div className="flex bg-orange p-2 text-center font-bold text-white">
+              <div className="flex bg-persimmon p-2 text-center font-bold text-white">
                 <div className="w-1/3">獎項</div>
                 <div className="w-1/3">張數</div>
                 <div className="w-1/3">機率</div>

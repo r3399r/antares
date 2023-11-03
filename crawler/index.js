@@ -73,10 +73,10 @@ const getOverall = async () => {
 }
 
 const main = async () => {
-    const result = []
+    let result = []
 
     let count = 0;
-    const maxTries = 3;
+    const maxTries = 5;
     while (true) {
         try {
             const tempResult = await getOverall()
@@ -88,7 +88,8 @@ const main = async () => {
             }
             break;
         } catch (e) {
-            console.log('tries:', count)
+            console.log('tries:', count + 1)
+            result = []
             if (count++ === maxTries) throw e;
         }
     }

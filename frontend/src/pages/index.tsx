@@ -46,15 +46,24 @@ const Home = () => {
   return (
     <>
       <Head>
-        <title>刮刮樂機率分析</title>
-        <meta name="description" content="刮刮樂機率全分析，尋找最適合入手的刮刮樂" />
+        <title>刮刮樂機率分析 最容易中獎的是這一個! 尋找最適合你的刮刮樂 | Celestial Studio</title>
+        <meta
+          name="description"
+          content={`每款刮刮樂有著不同的中獎率，除了中獎率之外，還有勝率、回本率、期望值等機率數值，利用樂透官方網站提供的數據進行計算，每週自動更新，無論你尋求的是高勝率或是高中獎率，這裡會讓你找到最適合的刮刮樂！現在就利用這個表格，找尋最高勝率的刮刮樂吧！上市中的刮刮樂主題有${stats
+            .map((v) => v.topic)
+            .join(',')}`}
+        />
         <meta
           name="google-site-verification"
           content="VZYlmjm2nQXB01Ifn3vwk9X9z0b9wWCC7glkeOpWZlg"
         />
       </Head>
       <div>
-        <div className="mb-[22px] mt-10 overflow-x-auto pb-2">
+        <div className="my-2 flex h-[50px] items-center justify-center gap-3">
+          <Image src={IcLogo} alt="logo" className="h-full" />
+          <h1 className="text-2xl font-bold">刮刮樂機率分析</h1>
+        </div>
+        <div className="mb-[22px] overflow-x-auto pb-2">
           <div className="flex min-w-[1145px] bg-red text-center font-bold text-white">
             <div
               className="sticky left-0 box-border flex h-full w-[10%] min-w-[130px] cursor-pointer items-center justify-center bg-persimmon px-1 py-5"

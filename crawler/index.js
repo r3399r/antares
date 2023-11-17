@@ -76,7 +76,7 @@ const main = async () => {
     let result = []
 
     let count = 0;
-    const maxTries = 5;
+    const maxTries = 10;
     while (true) {
         try {
             const tempResult = await getOverall()

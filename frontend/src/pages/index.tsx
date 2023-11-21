@@ -11,12 +11,18 @@ import IcSortDesc from '@/images/ic-sort-desc.svg';
 import IcSort from '@/images/ic-sort.svg';
 import { useCallback, useMemo, useState } from 'react';
 import Image from 'next/image';
-import { Modal } from '@mui/material';
+import { Alert, Modal, Snackbar } from '@mui/material';
+import { FacebookIcon, FacebookShareButton, LineIcon, LineShareButton } from 'react-share';
+import ShareIcon from '@mui/icons-material/Share';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+
+const url = 'https://lottery.celestialstudio.net/';
 
 const Home = () => {
   const [sort, setSort] = useState<keyof InstantStat>('id');
   const [order, setOrder] = useState<'asc' | 'desc'>('desc');
   const [openIdx, setOpenIdx] = useState<number>();
+  const [open, setOpen] = useState(false);
 
   const stats = useMemo(() => getInstants().sort(compare(sort, order)), [sort, order]);
   const target = useMemo(() => (openIdx !== undefined ? stats[openIdx] : null), [stats, openIdx]);
@@ -46,7 +52,7 @@ const Home = () => {
   return (
     <>
       <Head>
-        <title>刮刮樂機率分析 最容易中獎的是這一個! 尋找最適合你的刮刮樂 | Celestial Studio</title>
+        <title>刮刮樂機率分析，最容易中獎的是這一個！尋找最適合你的刮刮樂 | Celestial Studio</title>
         <meta
           name="description"
           content={`每款刮刮樂有著不同的中獎率，除了中獎率之外，還有勝率、回本率、期望值等機率數值，利用樂透官方網站提供的數據進行計算，每週自動更新，無論你尋求的是高勝率或是高中獎率，這裡會讓你找到最適合的刮刮樂！現在就利用這個表格，找尋最高勝率的刮刮樂吧！上市中的刮刮樂主題有${stats
@@ -59,9 +65,20 @@ const Home = () => {
         />
       </Head>
       <div>
-        <div className="my-2 flex h-[50px] items-center justify-center gap-3">
+        <div className="my-2 flex h-[50px] items-center justify-center gap-2">
           <Image src={IcLogo} alt="logo" className="h-full" />
           <h1 className="text-2xl font-bold">刮刮樂機率分析</h1>
+          <div className="cursor-pointer">
+            <CopyToClipboard text={url} onCopy={() => setOpen(true)}>
+              <ShareIcon />
+            </CopyToClipboard>
+          </div>
+          <FacebookShareButton url={url}>
+            <FacebookIcon size={30} round />
+          </FacebookShareButton>
+          <LineShareButton url={url}>
+            <LineIcon size={30} round />
+          </LineShareButton>
         </div>
         <div className="mb-[22px] overflow-x-auto pb-2">
           <div className="flex min-w-[1145px] bg-red text-center font-bold text-white">
@@ -273,6 +290,11 @@ const Home = () => {
           </div>
         </div>
       </Modal>
+      <Snackbar open={open} autoHideDuration={4000} onClose={() => setOpen(false)}>
+        <Alert severity="success" sx={{ width: '100%' }}>
+          已複製網址
+        </Alert>
+      </Snackbar>
     </>
   );
 };

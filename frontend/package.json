@@ -15,16 +15,20 @@
   "dependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "@mui/material": "^5.14.12",
+    "@mui/icons-material": "^5.14.18",
+    "@mui/material": "^5.14.18",
     "bignumber.js": "^9.1.2",
     "classnames": "^2.3.2",
     "date-fns": "^2.30.0",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-copy-to-clipboard": "^5.1.0",
+    "react-dom": "18.2.0",
+    "react-share": "^5.0.2"
   },
   "devDependencies": {
     "@types/node": "20.5.0",
     "@types/react": "18.2.20",
+    "@types/react-copy-to-clipboard": "^5.0.7",
     "@types/react-dom": "18.2.7",
     "@typescript-eslint/eslint-plugin": "^6.4.0",
     "autoprefixer": "10.4.15",

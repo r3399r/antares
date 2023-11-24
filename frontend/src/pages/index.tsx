@@ -27,6 +27,19 @@ const Home = () => {
   const stats = useMemo(() => getInstants().sort(compare(sort, order)), [sort, order]);
   const target = useMemo(() => (openIdx !== undefined ? stats[openIdx] : null), [stats, openIdx]);
 
+  const totalPrize = useMemo(
+    () => target?.structure.reduce((p, c) => bn(c.prize).times(c.count).plus(p), bn(0)) ?? bn(0),
+    [target],
+  );
+  const totalRevenue = useMemo(
+    () => (target ? bn(target.price).times(target.total) : bn(0)),
+    [target],
+  );
+  const feedbackRate = useMemo(
+    () => totalPrize.div(totalRevenue).times(100),
+    [totalPrize, totalRevenue],
+  );
+
   const click = useCallback(
     (key: keyof InstantStat) => {
       if (sort === key && order === 'desc') setOrder('asc');
@@ -248,6 +261,16 @@ const Home = () => {
             <p>
               <b>下市日：</b>
               {target?.closedAt}
+            </p>
+            <p>
+              <b>總獎金：</b>${totalPrize.toFormat()}
+            </p>
+            <p>
+              <b>總營業額：</b>${totalRevenue.toFormat()}
+            </p>
+            <p>
+              <b>總回饋率：</b>
+              {feedbackRate.toFormat(2)}%
             </p>
             <p>
               <b>

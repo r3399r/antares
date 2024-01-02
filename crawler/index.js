@@ -42,7 +42,7 @@ const main = async () => {
     let result = []
 
     let count = 0;
-    const maxTries = 3;
+    const maxTries = 10;
     while (true) {
         try {
             const scratches = await getAllScratches()

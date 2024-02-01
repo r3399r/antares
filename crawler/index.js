@@ -17,7 +17,7 @@ const getStructure = async (id, newsId) => {
         if (n % 2 === 1) {
             $(li).each((i, e) => {
                 if ($(e).text() === '\u00a0') return
-                queue.push(Number($(e).text().split('NT$')[1].replace(/\,/g, '')))
+                queue.push(Number($(e).text().match(/\d+/g).join('')))
             })
         }
         if (n % 2 === 0) {
@@ -25,7 +25,7 @@ const getStructure = async (id, newsId) => {
                 if ($(e).text() === '\u00a0') return
                 const prize = queue.shift()
                 if (prize === undefined) throw new Error('price is undefined')
-                structure.push({ prize, count: Number($(e).text().replace(/\,/g, '')) })
+                structure.push({ prize, count: Number($(e).text().match(/\d+/g).join('')) })
             })
         }
     }

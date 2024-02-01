@@ -296,7 +296,7 @@ const Home = () => {
                   <div className="w-1/3 px-1 py-2">{bnFormat(v.count)}</div>
                   <div className="relative w-1/3 px-1 py-2">
                     <div className="relative z-10">
-                      {bn(v.count).div(target.total).times(100).toFixed(7)}%
+                      {bn(v.count).div(target.total).times(100).toFixed(5)}%
                     </div>
                     <span
                       className="absolute inset-y-0 left-1 my-1 rounded-sm bg-gold"

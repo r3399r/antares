@@ -96,7 +96,7 @@ const Home = () => {
           </LineShareButton>
         </div>
         <div className="mb-[22px] overflow-x-auto pb-2">
-          <div className="flex min-w-[1145px] bg-red text-center font-bold text-white">
+          <div className="flex min-w-[1245px] bg-red text-center font-bold text-white">
             <div
               className="sticky left-0 box-border flex h-full w-[calc(100%/11)] min-w-[130px] cursor-pointer items-center justify-center bg-persimmon px-1 py-5"
               onClick={() => click('id')}
@@ -172,7 +172,7 @@ const Home = () => {
           {stats?.map((v, i) => (
             <div
               key={v.id}
-              className={classNames('flex min-w-[1145px] text-center text-brown', {
+              className={classNames('flex min-w-[1245px] text-center text-brown', {
                 'bg-yellow': i % 2 === 0,
                 'bg-white': i % 2 === 1,
               })}

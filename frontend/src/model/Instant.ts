@@ -19,6 +19,9 @@ export type InstantStat = {
   winRate: number;
   noLoseRate: number;
   expect: number;
+  expectWin: number;
+  expectLose: number;
+  winLoseRatio: number;
   topPrize: number;
   topCount: number;
   releasedAt: string;

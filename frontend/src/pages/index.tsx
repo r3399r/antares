@@ -249,28 +249,44 @@ const Home = () => {
               <h1 className="text-4xl font-bold">刮刮樂機率分析</h1>
             </div>
             <p className="my-4">點擊標頭可以排序，尋找最符合自己需求的刮刮樂。</p>
-            <p>
-              <b>中獎率：</b>刮出獎金的機率
-              <br />
-              <b>賺錢率：</b>「刮出獎金」大於「遊戲售價」的機率
-              <br />
-              <b>回本率：</b>「刮出獎金」大於或等於「遊戲售價」的機率
-              <br />
-              <b>賺賠比：</b>「賺錢時平均賺到的錢」與「賠錢時平均賠掉的錢」的比值。若賺賠比為
-              3，表示贏 1 次可以抵過輸 3 次，可搭配賺錢率決定購買策略
-              <br />
-              <b>期望值：</b>平均一張刮刮樂可獲得之獎金
-            </p>
+            <div className="flex flex-col gap-2">
+              <p>
+                <b>中獎率：</b>刮出獎金的機率
+              </p>
+              <p>
+                <b>賺錢率：</b>「刮出獎金」大於「遊戲售價」的機率
+              </p>
+              <p>
+                <b>回本率：</b>「刮出獎金」大於或等於「遊戲售價」的機率
+              </p>
+              <p>
+                <b>賺賠比：</b>「賺錢時平均賺到的錢」與「賠錢時平均賠掉的錢」的比值。若賺賠比為
+                3，表示贏 1 次可以抵過輸 3 次，可搭配賺錢率決定購買策略
+              </p>
+              <p>
+                <b>期望值：</b>平均一張刮刮樂可獲得之獎金
+              </p>
+            </div>
             <p className="my-4">
-              此網頁每週自動至台灣彩券官網取得最新資料並更新。若資料有出入歡迎到 Github 回報給作者
+              此網頁每週自動至台灣彩券官網取得最新資料並更新。若資料有出入歡迎到 FB 粉專或是到
+              Github 回報給作者。
             </p>
-            <Link
-              className="text-weissbier underline"
-              href="https://github.com/r3399r/antares"
-              target="_blank"
-            >
-              Github
-            </Link>
+            <div className="flex gap-2">
+              <Link
+                className="text-weissbier underline"
+                href="https://www.facebook.com/profile.php?id=61556638474638"
+                target="_blank"
+              >
+                Facebook
+              </Link>
+              <Link
+                className="text-weissbier underline"
+                href="https://github.com/r3399r/antares"
+                target="_blank"
+              >
+                Github
+              </Link>
+            </div>
           </div>
           <p className="mt-4 text-center text-sm">Copyright © 2022 Celestial Studio</p>
         </div>

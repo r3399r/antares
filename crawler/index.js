@@ -3,9 +3,8 @@ const cheerio = require("cheerio");
 const fs = require('fs');
 
 const getStructure = async (id, newsId) => {
-    const pageHTML = await axios.get(`https://www.taiwanlottery.com/news/news/${newsId}`)
-    const $0 = cheerio.load(pageHTML.data)
-    const $ = cheerio.load($0('#lotto-news-iframe').attr('src'))
+    const res = await axios.get(`https://api.taiwanlottery.com/TLCAPIWeB/News/Detail/${newsId}`)
+    const $ = cheerio.load(res.data.content.content)
 
     const structure = []
     const table = $(`#${id}`).parent().siblings('table').children('tbody').children().children().children('ul')

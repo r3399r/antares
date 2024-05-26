@@ -72,7 +72,9 @@ const calculateStats = (instants: Instant[]): InstantStat[] =>
         topCount: data.structure.find((v) => topPrize.eq(v.prize))?.count ?? 0,
         closedAt: format(new Date(data.closedAt), 'yyyy/MM/dd'),
         releasedAt: format(new Date(data.releasedAt), 'yyyy/MM/dd'),
-        structure: [...data.structure, { prize: 0, count: totalZero.toNumber() }],
+        structure: totalZero.eq(0)
+          ? data.structure
+          : [...data.structure, { prize: 0, count: totalZero.toNumber() }],
       };
     })
     .sort(compare('id', 'desc'));

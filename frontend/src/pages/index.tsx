@@ -271,21 +271,42 @@ const Home = () => {
               此網頁每週自動至台灣彩券官網取得最新資料並更新。若資料有出入歡迎到 FB 粉專或是到
               Github 回報給作者。
             </p>
-            <div className="flex gap-2">
-              <Link
-                className="text-weissbier underline"
-                href="https://www.facebook.com/profile.php?id=61556638474638"
-                target="_blank"
-              >
-                Facebook
-              </Link>
-              <Link
-                className="text-weissbier underline"
-                href="https://github.com/r3399r/antares"
-                target="_blank"
-              >
-                Github
-              </Link>
+            <p className="text-xl font-bold">聯絡資訊</p>
+            <div className="flex gap-1">
+              <p className="w-[80px]">Facebook</p>
+              <p className="break-all">
+                <Link
+                  className="text-weissbier underline"
+                  href="https://www.facebook.com/profile.php?id=61556638474638"
+                  target="_blank"
+                >
+                  https://www.facebook.com/profile.php?id=61556638474638
+                </Link>
+              </p>
+            </div>
+            <div className="flex gap-1">
+              <p className="w-[80px]">Github</p>
+              <p className="break-all">
+                <Link
+                  className="text-weissbier underline"
+                  href="https://github.com/r3399r/antares"
+                  target="_blank"
+                >
+                  https://github.com/r3399r/antares
+                </Link>
+              </p>
+            </div>
+            <div className="flex gap-1">
+              <p className="w-[80px]">Email</p>
+              <p className="break-all">
+                <Link
+                  className="text-weissbier underline"
+                  href="mailto:lamplighter.planet@gmail.com"
+                  target="_blank"
+                >
+                  lamplighter.planet@gmail.com
+                </Link>
+              </p>
             </div>
           </div>
           <p className="mt-4 text-center text-sm">Copyright © 2022 Celestial Studio</p>

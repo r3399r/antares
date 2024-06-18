@@ -6,6 +6,7 @@ import classNames from 'classnames';
 import Head from 'next/head';
 import Link from 'next/link';
 import IcLogo from '@/images/ic-logo.svg';
+import PicBanner from '@/images/pic-banner.png';
 import IcSortAsc from '@/images/ic-sort-asc.svg';
 import IcSortDesc from '@/images/ic-sort-desc.svg';
 import IcSort from '@/images/ic-sort.svg';
@@ -242,7 +243,13 @@ const Home = () => {
             </div>
           ))}
         </div>
-        <div className="bg-honey p-10">
+        <div className="bg-honey py-5 md:p-5">
+          <p className="text-center">↓↓↓↓↓ 贊助我們 ↓↓↓↓↓</p>
+          <div className="flex justify-center pb-4">
+            <a href="https://p.ecpay.com.tw/38158C6" target="_blank">
+              <Image alt="點擊圖片贊助我們" src={PicBanner} />
+            </a>
+          </div>
           <div className="box-border bg-white px-8 py-6 sm:px-[60px] sm:py-10">
             <div className="flex items-center gap-4">
               <Image src={IcLogo} alt="logo" />

@@ -34,7 +34,7 @@ const getStructure = async (id, newsId) => {
 
 const getAllScratches = async () => {
     const res = await axios.get('https://api.taiwanlottery.com/TLCAPIWeB/Instant/Result?ScratchName&Start_ListingDate&End_ListingDate&PageNum=1&PageSize=100&Type=1')
-    return res.data.content.resultList
+    return res.data.content.resultList.filter(v => new Date(v.downDate) > new Date())
 }
 
 const main = async () => {

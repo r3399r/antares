@@ -244,10 +244,10 @@ const Home = () => {
           ))}
         </div>
         <div className="bg-honey py-5 md:p-5">
-          <p className="text-center">↓↓↓↓↓ 贊助我們 ↓↓↓↓↓</p>
+          <p className="text-center">↓↓ 如果你喜歡這個表格，可以小額支持我們 ↓↓</p>
           <div className="flex justify-center pb-4">
             <a href="https://p.ecpay.com.tw/38158C6" target="_blank">
-              <Image alt="點擊圖片贊助我們" src={PicBanner} />
+              <Image alt="點擊圖片支持我們" src={PicBanner} />
             </a>
           </div>
           <div className="box-border bg-white px-8 py-6 sm:px-[60px] sm:py-10">
@@ -275,46 +275,16 @@ const Home = () => {
               </p>
             </div>
             <p className="my-4">
-              此網頁每週自動至台灣彩券官網取得最新資料並更新。若資料有出入歡迎到 FB 粉專或是到
-              Github 回報給作者。
+              此網頁每週自動至台灣彩券官網取得最新資料並更新。若資料有出入歡迎到 FB 粉專回報給作者。
             </p>
-            <p className="text-xl font-bold">聯絡資訊</p>
-            <div className="flex gap-1">
-              <p className="w-[80px]">Facebook</p>
-              <p className="break-all">
-                <Link
-                  className="text-weissbier underline"
-                  href="https://www.facebook.com/profile.php?id=61556638474638"
-                  target="_blank"
-                >
-                  https://www.facebook.com/profile.php?id=61556638474638
-                </Link>
-              </p>
-            </div>
-            <div className="flex gap-1">
-              <p className="w-[80px]">Github</p>
-              <p className="break-all">
-                <Link
-                  className="text-weissbier underline"
-                  href="https://github.com/r3399r/antares"
-                  target="_blank"
-                >
-                  https://github.com/r3399r/antares
-                </Link>
-              </p>
-            </div>
-            <div className="flex gap-1">
-              <p className="w-[80px]">Email</p>
-              <p className="break-all">
-                <Link
-                  className="text-weissbier underline"
-                  href="mailto:lamplighter.planet@gmail.com"
-                  target="_blank"
-                >
-                  lamplighter.planet@gmail.com
-                </Link>
-              </p>
-            </div>
+            <p className="text-xl font-bold">聯絡我們</p>
+            <Link
+              className="text-weissbier underline"
+              href="https://www.facebook.com/profile.php?id=61556638474638"
+              target="_blank"
+            >
+              Facebook
+            </Link>
           </div>
           <p className="mt-4 text-center text-sm">Copyright © 2022 Celestial Studio</p>
         </div>

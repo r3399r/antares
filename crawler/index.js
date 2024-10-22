@@ -16,7 +16,7 @@ const getStructure = async (id, newsId) => {
         if (n % 2 === 1) {
             $(li).each((i, e) => {
                 if ($(e).text() === '\u00a0') return
-                queue.push(Number($(e).text().match(/\d+/g).join('')))
+                queue.push(Number($(e).text().split('+')[0].match(/\d+/g).join('')))
             })
         }
         if (n % 2 === 0) {

@@ -96,10 +96,10 @@ const Home = () => {
             <LineIcon size={30} round />
           </LineShareButton>
         </div>
-        <div className="mb-[22px] overflow-x-auto pb-2">
-          <div className="flex min-w-[1245px] bg-red text-center font-bold text-white">
+        <div className="mb-[22px] h-[calc(90vh-50px)] overflow-x-auto pb-2">
+          <div className="sticky top-0 z-30 flex min-w-[1245px] bg-red text-center font-bold text-white">
             <div
-              className="sticky left-0 box-border flex h-full w-[calc(100%/11)] min-w-[130px] cursor-pointer items-center justify-center bg-persimmon px-1 py-5"
+              className="sticky left-0 z-20 box-border flex h-full w-[calc(100%/11)] min-w-[130px] cursor-pointer items-center justify-center bg-persimmon px-1 py-5"
               onClick={() => click('id')}
             >
               <div>刮刮樂主題</div>

@@ -218,7 +218,7 @@ const Home = () => {
                 <div className="relative z-10">{bn(v.winLoseRatio).toFixed(2)}</div>
                 <span
                   className="absolute inset-y-0 left-1 my-1 rounded-sm bg-gold"
-                  style={{ width: `calc((100% - 8px)*${v.winLoseRatio / 5})` }}
+                  style={{ width: `calc((100% - 8px)*${v.winLoseRatio / 6})` }}
                 />
               </div>
               <div className="relative box-border w-[calc(100%/11)] min-w-[140px] px-1 py-2">

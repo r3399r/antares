@@ -79,6 +79,36 @@ const Home = () => {
           name="google-site-verification"
           content="VZYlmjm2nQXB01Ifn3vwk9X9z0b9wWCC7glkeOpWZlg"
         />
+        <script type="application/ld+json">
+          {`
+{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "什麼是刮刮樂?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "刮刮樂主要訴求在於提供即時性的樂趣，消費者刮開可立即得知是否中獎與中獎金額，豐富多樣化的遊戲主題、券面設計及視覺色彩，刮開過程中可體驗不同的玩法及樂趣"
+        }
+      }
+    ]
+}
+`}
+        </script>
+        <script type="application/ld+json">
+          {`
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "刮刮樂機率分析",
+  "datePublished":"2025-06-01T00:00:00+08:00",
+  "url": "https://lottery.celestialstudio.net/",
+  "description": "最完整的台灣刮刮樂機率分析、勝率、回本率、期望值，每週自動更新。"
+}
+`}
+        </script>
       </Head>
       <div>
         <div className="my-2 flex h-[50px] items-center justify-center gap-2">

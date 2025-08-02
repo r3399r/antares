@@ -99,14 +99,18 @@ const Home = () => {
         </script>
         <script type="application/ld+json">
           {`
-{
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "name": "刮刮樂機率分析",
-  "datePublished":"2025-06-01T00:00:00+08:00",
-  "url": "https://lottery.celestialstudio.net/",
-  "description": "最完整的台灣刮刮樂機率分析、勝率、回本率、期望值，每週自動更新。"
-}
+  {
+      "@context": "https://schema.org",
+      "@type": "NewsArticle",
+      "headline": "刮刮樂機率分析，最容易中獎的是這一個！",
+      "description": "最完整的台灣刮刮樂機率分析、勝率、回本率、期望值，每週自動更新。",
+      "datePublished": ${new Date().toISOString()},
+      "dateModified": ${new Date().toISOString()},
+      "author": [{
+          "@type": "Person",
+          "name": "Celestial Studio"
+        }]
+    }
 `}
         </script>
       </Head>

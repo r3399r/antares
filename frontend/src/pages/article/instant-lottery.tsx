@@ -1,9 +1,9 @@
-import { getInstants } from '@/service/instantService';
 import Head from 'next/head';
-import { useMemo } from 'react';
 import StatsTable from '@/components/StatsTable';
+import { useMemo } from 'react';
+import { getInstants } from '@/service/instantService';
 
-const Home = () => {
+export default function ArticlePage() {
   const stats = useMemo(() => getInstants(), []);
 
   return (
@@ -15,10 +15,6 @@ const Home = () => {
           content={`每款刮刮樂有著不同的中獎率，除了中獎率之外，還有勝率、回本率、期望值等機率數值，利用樂透官方網站提供的數據進行計算，每週自動更新，無論你尋求的是高勝率或是高中獎率，這裡會讓你找到最適合的刮刮樂！現在就利用這個表格，找尋最高勝率的刮刮樂吧！上市中的刮刮樂主題有${stats
             .map((v) => v.topic)
             .join('、')}`}
-        />
-        <meta
-          name="google-site-verification"
-          content="VZYlmjm2nQXB01Ifn3vwk9X9z0b9wWCC7glkeOpWZlg"
         />
         <script type="application/ld+json">
           {`
@@ -67,7 +63,7 @@ const Home = () => {
   {
       "@context": "https://schema.org",
       "@type": "Article",
-      "url": "https://lottery.celestialstudio.net/article/your-article-slug",
+      "url": "https://lottery.celestialstudio.net/article/instant-lottery",
       "headline": "刮刮樂機率分析，最容易中獎的是這一個！",
       "description": "最完整的台灣刮刮樂機率分析、勝率、回本率、期望值，每週自動更新。",
       "datePublished": "${new Date().toISOString()}",
@@ -91,6 +87,4 @@ const Home = () => {
       <StatsTable />
     </>
   );
-};
-
-export default Home;
+}

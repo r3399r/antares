@@ -83,7 +83,7 @@ const Home = () => {
               "@type": "ImageObject",
               "url": "https://lottery.celestialstudio.net/icon.png"
           }
-      },
+      }
     }
 `}
         </script>

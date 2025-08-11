@@ -17,7 +17,7 @@ import { FacebookIcon, FacebookShareButton, LineIcon, LineShareButton } from 're
 import ShareIcon from '@mui/icons-material/Share';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 
-const url = 'https://lottery.celestialstudio.net/';
+const year = ['鼠', '牛', '虎', '兔', '龍', '蛇', '馬', '羊', '猴', '雞', '狗', '豬'];
 
 const SlideTransition = (props: SlideProps) => <Slide {...props} direction="up" />;
 
@@ -29,6 +29,20 @@ const Home = () => {
 
   const stats = useMemo(() => getInstants().sort(compare(sort, order)), [sort, order]);
   const target = useMemo(() => (openIdx !== undefined ? stats[openIdx] : null), [stats, openIdx]);
+
+  const currentYear = new Date().getFullYear();
+  const currentYearChinese = year[(currentYear - 4) % 12];
+
+  const title = `${currentYear}${currentYearChinese}年刮刮樂攻略！全${stats.length}款中獎機率排行，還有賺錢機率！ | Celestial Studio`;
+  const description = `${stats
+    .map(
+      (v) =>
+        `${v.topic}·頭獎${v.topPrize}萬·中獎率${bn(v.bingoRate).toFixed(0)}%·賺錢率${bn(
+          v.winRate,
+        ).toFixed(0)}%`,
+    )
+    .join('、')}，每週自動更新。刮刮樂攻略，中獎機率一覽無遺！`;
+  const url = 'https://lottery.celestialstudio.net/';
 
   const totalPrize = useMemo(
     () => target?.structure.reduce((p, c) => bn(c.prize).times(c.count).plus(p), bn(0)) ?? bn(0),
@@ -68,13 +82,8 @@ const Home = () => {
   return (
     <>
       <Head>
-        <title>刮刮樂機率分析，最容易中獎的是這一個！尋找最適合你的刮刮樂 | Celestial Studio</title>
-        <meta
-          name="description"
-          content={`每款刮刮樂有著不同的中獎率，除了中獎率之外，還有勝率、回本率、期望值等機率數值，利用樂透官方網站提供的數據進行計算，每週自動更新，無論你尋求的是高勝率或是高中獎率，這裡會讓你找到最適合的刮刮樂！現在就利用這個表格，找尋最高勝率的刮刮樂吧！上市中的刮刮樂主題有${stats
-            .map((v) => v.topic)
-            .join('、')}`}
-        />
+        <title>{title}</title>
+        <meta name="description" content={description} />
         <meta
           name="google-site-verification"
           content="VZYlmjm2nQXB01Ifn3vwk9X9z0b9wWCC7glkeOpWZlg"
@@ -111,10 +120,8 @@ const Home = () => {
   "@context": "https://schema.org",
   "@type": "WebSite",
   "url": "${url}",
-  "name": "刮刮樂機率分析，最容易中獎的是這一個！尋找最適合你的刮刮樂 | Celestial Studio",
-  "description": "每款刮刮樂有著不同的中獎率，除了中獎率之外，還有勝率、回本率、期望值等機率數值，利用樂透官方網站提供的數據進行計算，每週自動更新，無論你尋求的是高勝率或是高中獎率，這裡會讓你找到最適合的刮刮樂！現在就利用這個表格，找尋最高勝率的刮刮樂吧！上市中的刮刮樂主題有${stats
-    .map((v) => v.topic)
-    .join('、')}",
+  "name": "${title}",
+  "description": "${description}",
   "inLanguage": "zh-Hant",
   "publisher": {
     "@type": "Organization",
@@ -133,10 +140,8 @@ const Home = () => {
   "@context": "https://schema.org",
   "@type": "WebPage",
   "url": "${url}",
-  "name": "刮刮樂機率分析，最容易中獎的是這一個！尋找最適合你的刮刮樂 | Celestial Studio",
-  "description": "每款刮刮樂有著不同的中獎率，除了中獎率之外，還有勝率、回本率、期望值等機率數值，利用樂透官方網站提供的數據進行計算，每週自動更新，無論你尋求的是高勝率或是高中獎率，這裡會讓你找到最適合的刮刮樂！現在就利用這個表格，找尋最高勝率的刮刮樂吧！上市中的刮刮樂主題有${stats
-    .map((v) => v.topic)
-    .join('、')}",
+  "name": "${title}",
+  "description": "${description}",
   "inLanguage": "zh-Hant",
   "isPartOf": {
     "@id": "${url}"
@@ -161,7 +166,7 @@ const Home = () => {
       <div>
         <div className="my-2 flex h-[50px] items-center justify-center gap-2">
           <Image src={IcLogo} alt="logo" className="h-full" />
-          <h1 className="text-2xl font-bold">刮刮樂機率分析</h1>
+          <h1 className="text-2xl font-bold">刮刮樂攻略，中獎機率一覽</h1>
           <div className="cursor-pointer">
             <CopyToClipboard text={url} onCopy={() => setOpen(true)}>
               <ShareIcon />

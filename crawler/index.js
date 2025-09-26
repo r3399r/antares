@@ -41,7 +41,7 @@ const postFb = async (info) => {
     const res = await axios.post(`https://graph.facebook.com/${process.env.FB_PAGE_ID}/photos`, {
         url: info.picPath,
         access_token: process.env.FB_ACCESS_TOKEN,
-        caption: `主題: ${info.topic}\n售價: ${info.price}元\n總張數: ${info.total}張\n上市日期: ${info.releasedAt}\n\n獎金結構:\n${info.structure.sort((a, b) => b.prize - a.prize).map(s => `獎金${s.prize}元 ${s.count}張`).join('\n')}`
+        caption: `主題: ${info.topic}\n售價: ${info.price}元\n總張數: ${info.total}張\n上市日期: ${new Date(info.releasedAt).toLocaleDateString()}\n\n獎金結構:\n${info.structure.sort((a, b) => b.prize - a.prize).map(s => `獎金${s.prize}元 ${s.count}張`).join('\n')}`
     })
     await axios.post(`https://graph.facebook.com/${res.data.post_id}/comments`, {
         message: "看更多刮刮樂機率分析\nhttps://lottery.celestialstudio.tw",

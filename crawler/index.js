@@ -70,7 +70,7 @@ const main = async () => {
                     picPath: i.picPath,
                     structure
                 }
-                if (new Date(i.listingDate) > new Date(Date.now().getTime() - 14 * 24 * 60 * 60 * 1000)) {
+                if (new Date(i.listingDate) > new Date(Date.now() - 14 * 24 * 60 * 60 * 1000)) {
                     await postFb(info)
                 }
                 result.push(info)

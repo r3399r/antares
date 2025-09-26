@@ -37,6 +37,18 @@ const getAllScratches = async () => {
     return res.data.content.resultList.filter(v => new Date(v.downDate) > new Date())
 }
 
+const postFb = async (info) => {
+    const res = await axios.post(`https://graph.facebook.com/${process.env.FB_PAGE_ID}/photos`, {
+        url: info.picPath,
+        access_token: process.env.FB_ACCESS_TOKEN,
+        caption: `主題: ${info.topic}\n售價: ${info.price}元\n總張數: ${info.total}張\n上市日期: ${new Date(info.releasedAt).toLocaleDateString()}\n\n獎金結構:\n${info.structure.sort((a, b) => b.prize - a.prize).map(s => `獎金${s.prize}元 ${s.count}張`).join('\n')}`
+    })
+    await axios.post(`https://graph.facebook.com/${res.data.post_id}/comments`, {
+        message: "看更多刮刮樂機率分析\nhttps://lottery.celestialstudio.tw",
+        access_token: process.env.FB_ACCESS_TOKEN
+    })
+}
+
 const main = async () => {
     let result = []
 
@@ -48,15 +60,20 @@ const main = async () => {
 
             for (const i of scratches) {
                 const structure = await getStructure(i.gameVol, i.newsId)
-                result.push({
+                const info = {
                     id: i.gameVol,
                     topic: i.scratchName,
                     price: i.money,
                     total: i.issuedCount,
                     releasedAt: i.listingDate,
                     closedAt: i.downDate,
+                    picPath: i.picPath,
                     structure
-                })
+                }
+                if (new Date(i.listingDate) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)) {
+                    await postFb(info)
+                }
+                result.push(info)
             }
             break;
         } catch (e) {

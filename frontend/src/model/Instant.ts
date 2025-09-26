@@ -5,6 +5,7 @@ export type Instant = {
   total: number;
   releasedAt: string;
   closedAt: string;
+  picUrl: string;
   structure: { prize: number; count: number }[];
 };
 

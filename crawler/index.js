@@ -2,34 +2,64 @@ const axios = require("axios");
 const cheerio = require("cheerio");
 const fs = require('fs');
 
-const getStructure = async (id, newsId) => {
-    const res = await axios.get(`https://api.taiwanlottery.com/TLCAPIWeB/News/Detail/${newsId}`)
-    const $ = cheerio.load(res.data.content.content)
+const extractGame = (content) => {
+    const $ = cheerio.load(content)
+    const games = [];
 
-    const structure = []
-    const table = $(`#${id}`).parent().siblings('table').children('tbody').children().children().children('ul')
-    let n = 0
-    let queue = []
-    for (const ul of $(table)) {
-        const li = $(ul).children('li')
-        n = n + 1
-        if (n % 2 === 1) {
-            $(li).each((i, e) => {
-                if ($(e).text() === '\u00a0') return
-                queue.push(Number($(e).text().split('+')[0].match(/\d+/g).join('')))
-            })
-        }
-        if (n % 2 === 0) {
-            $(li).each((i, e) => {
-                if ($(e).text() === '\u00a0') return
-                const prize = queue.shift()
-                if (prize === undefined) throw new Error('price is undefined')
-                structure.push({ prize, count: Number($(e).text().match(/\d+/g).join('')) })
-            })
-        }
-    }
+    // Find all game sections (table_area1, table_area2, etc.)
+    $('div[class^="table_area"]').each((i, section) => {
+        const $section = $(section);
 
-    return structure
+        // 2. Extract Title and ID
+        const gameTitle = $section.find('h2').first().text().replace('遊戲主題：', '').trim();
+        const gameId = $section.find('h1').first().text().replace('遊戲期數：', '').trim();
+
+        const prizes = [];
+
+        // 3. Find all prize tables within THIS specific section
+        // Using a filter to ensure we get the data tables, not the 'summy' (summary) tables
+        $section.find('table').each((tIdx, table) => {
+            const $table = $(table);
+
+            // Skip summary tables (Total tickets / Probability)
+            if ($table.hasClass('table1_summy') || $table.attr('class').includes('summy')) {
+                return;
+            }
+
+            const $cols = $table.find('td');
+            if ($cols.length >= 2) {
+                const prizeItems = $cols.eq(0).find('li');
+                const countItems = $cols.eq(1).find('li');
+
+                prizeItems.each((index, li) => {
+                    let rawPrize = $(li).text().trim();
+                    let rawCount = $(countItems[index]).text().trim();
+
+                    // Clean characters: strip NT$, commas, and common non-breaking space variants
+                    const cleanPrize = rawPrize.replace(/[NT\$,\s\u00a0]/g, '');
+                    const cleanCount = rawCount.replace(/[, \s\u00a0]/g, '');
+
+                    // Only add if we have actual digits
+                    if (cleanPrize && /^\d+$/.test(cleanPrize)) {
+                        prizes.push({
+                            prize: parseInt(cleanPrize, 10),
+                            count: parseInt(cleanCount, 10) || 0
+                        });
+                    }
+                });
+            }
+        });
+        console.log(`Game Title: ${gameTitle}, Game ID: ${gameId}`);
+        console.log('Prizes:', prizes);
+        if (gameId) {
+            games.push({
+                gameId,
+                gameTitle,
+                prizes
+            });
+        }
+    });
+    return games;
 }
 
 const getAllScratches = async () => {
@@ -51,15 +81,20 @@ const postFb = async (info) => {
 
 const main = async () => {
     let result = []
+    let gameInfo = []
 
     let count = 0;
     const maxTries = 10;
     while (true) {
         try {
             const scratches = await getAllScratches()
+            const newsIds = new Set(scratches.map(s => s.newsId))
+            for (const newsId of newsIds) {
+                const res = await axios.get(`https://api.taiwanlottery.com/TLCAPIWeB/News/Detail/${newsId}`)
+                gameInfo = [...gameInfo, ...extractGame(res.data.content.content)]
+            }
 
             for (const i of scratches) {
-                const structure = await getStructure(i.gameVol, i.newsId)
                 const info = {
                     id: i.gameVol,
                     topic: i.scratchName,
@@ -68,7 +103,7 @@ const main = async () => {
                     releasedAt: i.listingDate,
                     closedAt: i.downDate,
                     picPath: i.picPath,
-                    structure
+                    structure: gameInfo.find(g => g.gameId === i.gameVol)?.prizes || []
                 }
                 if (new Date(i.listingDate) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)) {
                     await postFb(info)

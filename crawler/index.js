@@ -67,11 +67,35 @@ const getAllScratches = async () => {
     return res.data.content.resultList.filter(v => new Date(v.downDate) > new Date())
 }
 
+const buildFbCaption = (info) => {
+    const sortedStructure = [...info.structure].sort((a, b) => b.prize - a.prize)
+    const totalPayout = sortedStructure.reduce((sum, s) => sum + s.prize * s.count, 0)
+    const totalRevenue = info.price * info.total
+    const returnRate = totalRevenue > 0 ? ((totalPayout / totalRevenue) * 100).toFixed(1) : '0.0'
+    const topPrize = sortedStructure[0]
+    const topPrizeOdds = topPrize && topPrize.count > 0 ? Math.round(info.total / topPrize.count) : null
+
+    const medals = ['🥇', '🥈', '🥉']
+    const structureLines = sortedStructure.map((s, i) => {
+        const label = medals[i] || '🎁'
+        const odds = s.count > 0 ? `（中獎機率 1/${Math.round(info.total / s.count).toLocaleString()}）` : ''
+        return `${label} ${s.prize.toLocaleString()} 元 x ${s.count.toLocaleString()} 張 ${odds}`
+    }).join('\n')
+
+    return `🎰 新刮刮樂上市：${info.topic}\n`
+        + `💰 售價：${info.price} 元\n`
+        + `🎫 總張數：${info.total.toLocaleString()} 張\n`
+        + `📅 上市日期：${new Date(info.releasedAt).toLocaleDateString()}\n`
+        + `📈 中獎回饋率：約 ${returnRate}%\n`
+        + (topPrizeOdds ? `✨ 頭獎中獎機率：1/${topPrizeOdds.toLocaleString()}\n` : '')
+        + `\n🏆 獎金結構：\n${structureLines}`
+}
+
 const postFb = async (info) => {
     const res = await axios.post(`https://graph.facebook.com/${process.env.FB_PAGE_ID}/photos`, {
         url: info.picPath,
         access_token: process.env.FB_ACCESS_TOKEN,
-        caption: `主題: ${info.topic}\n售價: ${info.price}元\n總張數: ${info.total}張\n上市日期: ${new Date(info.releasedAt).toLocaleDateString()}\n\n獎金結構:\n${info.structure.sort((a, b) => b.prize - a.prize).map(s => `獎金${s.prize}元 ${s.count}張`).join('\n')}`
+        caption: buildFbCaption(info)
     })
     await axios.post(`https://graph.facebook.com/${res.data.post_id}/comments`, {
         message: "看更多刮刮樂機率分析\nhttps://lottery.celestialstudio.net",

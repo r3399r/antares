@@ -1,7 +1,7 @@
 import { Instant, InstantStat } from '@/model/Instant';
 import { bn } from '@/util/bignumber';
 import { compare } from '@/util/compare';
-import { format } from 'date-fns';
+import { format, startOfToday } from 'date-fns';
 import instants from '@/constant/Instant.json';
 
 const calculateStats = (instants: Instant[]): InstantStat[] =>
@@ -50,9 +50,11 @@ const calculateStats = (instants: Instant[]): InstantStat[] =>
       const totalLose = bn(data.total).minus(totalNoLose);
       const totalZero = bn(data.total).minus(totalBingo);
       productLoseWithCost = bn(data.price).times(totalZero).plus(productLoseWithCost);
-      const expectWin = productWinWithCost.div(totalWin).toNumber();
-      const expectLose = productLoseWithCost.div(totalLose).toNumber();
-      const winLoseRatio = bn(expectWin).div(expectLose).toNumber();
+      // A card with no winning (or no losing) tickets would divide by zero; keep 0
+      // rather than letting NaN reach the page.
+      const expectWin = totalWin.isZero() ? 0 : productWinWithCost.div(totalWin).toNumber();
+      const expectLose = totalLose.isZero() ? 0 : productLoseWithCost.div(totalLose).toNumber();
+      const winLoseRatio = expectLose === 0 ? 0 : bn(expectWin).div(expectLose).toNumber();
 
       return {
         id: data.id,
@@ -72,6 +74,12 @@ const calculateStats = (instants: Instant[]): InstantStat[] =>
         topCount: data.structure.find((v) => topPrize.eq(v.prize))?.count ?? 0,
         closedAt: format(new Date(data.closedAt), 'yyyy/MM/dd'),
         releasedAt: format(new Date(data.releasedAt), 'yyyy/MM/dd'),
+        exchangeLastDate: data.exchangeLastDate
+          ? format(new Date(data.exchangeLastDate), 'yyyy/MM/dd')
+          : null,
+        picPath: data.picPath,
+        // Sold until 17:00 on its closing date, so a card closing today is still on sale.
+        isExpired: new Date(data.closedAt) < startOfToday(),
         structure: totalZero.eq(0)
           ? data.structure
           : [...data.structure, { prize: 0, count: totalZero.toNumber() }],
@@ -79,4 +87,14 @@ const calculateStats = (instants: Instant[]): InstantStat[] =>
     })
     .sort(compare('id', 'desc'));
 
+/** Every card the lottery publishes, on sale or not, newest first. */
 export const getInstants = () => calculateStats(instants as Instant[]);
+
+/** Cards currently on sale — what the ranking table compares. */
+export const getActiveInstants = () => getInstants().filter((v) => !v.isExpired);
+
+/** Cards no longer sold, most recently closed first. Their pages stay published. */
+export const getExpiredInstants = () =>
+  getInstants()
+    .filter((v) => v.isExpired)
+    .sort(compare('closedAt', 'desc'));

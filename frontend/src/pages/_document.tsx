@@ -3,9 +3,13 @@ import Script from 'next/script';
 
 export default function Document() {
   return (
-    <Html lang="en">
+    <Html lang="zh-Hant-TW">
       <Head>
-        <link rel="shortcut icon" href="/icon.png" />
+        <link rel="icon" href="/icon.png" />
+        <meta
+          name="google-site-verification"
+          content="VZYlmjm2nQXB01Ifn3vwk9X9z0b9wWCC7glkeOpWZlg"
+        />
         <Script
           id="gtag-script-1"
           strategy="beforeInteractive"

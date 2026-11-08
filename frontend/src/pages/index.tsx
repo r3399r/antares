@@ -1,10 +1,11 @@
-import { InstantStat } from '@/model/Instant';
-import { getInstants } from '@/service/instantService';
-import { bn, bnFormat } from '@/util/bignumber';
+import { InstantLink, InstantStat, toInstantLink } from '@/model/Instant';
+import { getActiveInstants, getExpiredInstants } from '@/service/instantService';
+import { bn } from '@/util/bignumber';
 import { compare } from '@/util/compare';
 import classNames from 'classnames';
-import Head from 'next/head';
 import Link from 'next/link';
+import { GetStaticProps } from 'next';
+import { format } from 'date-fns';
 import IcLogo from '@/images/ic-logo.svg';
 import PicBanner from '@/images/pic-banner.png';
 import IcSortAsc from '@/images/ic-sort-asc.svg';
@@ -12,50 +13,141 @@ import IcSortDesc from '@/images/ic-sort-desc.svg';
 import IcSort from '@/images/ic-sort.svg';
 import { useCallback, useMemo, useState } from 'react';
 import Image from 'next/image';
-import { Alert, Modal, Slide, SlideProps, Snackbar } from '@mui/material';
+import { Alert, Slide, SlideProps, Snackbar } from '@mui/material';
 import { FacebookIcon, FacebookShareButton, LineIcon, LineShareButton } from 'react-share';
 import ShareIcon from '@mui/icons-material/Share';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import Seo from '@/components/Seo';
+import InstantLinkList from '@/components/InstantLinkList';
+import { ARCHIVE_PATH, LOGO_URL, SITE_URL, instantPath } from '@/constant/site';
 
-const year = ['鼠', '牛', '虎', '兔', '龍', '蛇', '馬', '羊', '猴', '雞', '狗', '豬'];
+const zodiac = ['鼠', '牛', '虎', '兔', '龍', '蛇', '馬', '羊', '猴', '雞', '狗', '豬'];
 
 const SlideTransition = (props: SlideProps) => <Slide {...props} direction="up" />;
 
-const Home = () => {
+type Props = {
+  instants: InstantStat[];
+  recentlyClosed: InstantLink[];
+  expiredCount: number;
+  updatedAt: string;
+  year: number;
+};
+
+// Computed at build time so the page HTML (and its dates) is fixed per deploy.
+export const getStaticProps: GetStaticProps<Props> = () => {
+  const now = new Date();
+  const expired = getExpiredInstants();
+
+  return {
+    props: {
+      // The ranking table compares what you can actually buy today.
+      instants: getActiveInstants(),
+      recentlyClosed: expired.slice(0, 12).map(toInstantLink),
+      expiredCount: expired.length,
+      updatedAt: format(now, 'yyyy/MM/dd'),
+      year: now.getFullYear(),
+    },
+  };
+};
+
+/** Only the numeric stats can be ranked, so nullable fields stay out of `best`. */
+type NumericStatKey = {
+  [K in keyof InstantStat]: InstantStat[K] extends number ? K : never;
+}[keyof InstantStat];
+
+const best = (list: InstantStat[], key: NumericStatKey) =>
+  list.reduce<InstantStat | undefined>((p, c) => (!p || c[key] > p[key] ? c : p), undefined);
+
+const Home = ({ instants, recentlyClosed, expiredCount, updatedAt, year }: Props) => {
   const [sort, setSort] = useState<keyof InstantStat>('id');
   const [order, setOrder] = useState<'asc' | 'desc'>('desc');
-  const [openIdx, setOpenIdx] = useState<number>();
   const [open, setOpen] = useState(false);
 
-  const stats = useMemo(() => getInstants().sort(compare(sort, order)), [sort, order]);
-  const target = useMemo(() => (openIdx !== undefined ? stats[openIdx] : null), [stats, openIdx]);
+  const stats = useMemo(() => [...instants].sort(compare(sort, order)), [instants, sort, order]);
 
-  const currentYear = new Date().getFullYear();
-  const currentYearChinese = year[(currentYear - 4) % 12];
+  const url = `${SITE_URL}/`;
+  const bestBingo = best(instants, 'bingoRate');
+  const bestWin = best(instants, 'winRate');
+  const bestExpect = best(instants, 'expect');
+  const fmt = (v: InstantStat | undefined, key: NumericStatKey, unit: string) =>
+    v ? `「${v.topic}」（${v.price}元，${bn(v[key]).toFixed(2)}${unit}）` : '';
 
-  const title = `${currentYear}${currentYearChinese}年刮刮樂攻略！全${stats.length}款中獎機率排行，還有賺錢機率！ | Celestial Studio`;
-  const description = `${stats
-    .map(
-      (v) =>
-        `${v.topic}·頭獎${v.topPrize}萬·中獎率${bn(v.bingoRate).toFixed(0)}%·賺錢率${bn(
-          v.winRate,
-        ).toFixed(0)}%`,
-    )
-    .join('、')}，每週自動更新。刮刮樂攻略，中獎機率一覽無遺！`;
-  const url = 'https://lottery.celestialstudio.net/';
+  const title = `${year}${zodiac[(year - 4) % 12]}年刮刮樂攻略｜全${
+    instants.length
+  }款中獎率排行、賺錢率、期望值比較`;
+  const description = `比較台灣彩券目前販售中全部${
+    instants.length
+  }款刮刮樂的中獎率、賺錢率、回本率與每百元期望值。${
+    bestBingo ? `中獎率最高：${bestBingo.topic}（${bn(bestBingo.bingoRate).toFixed(1)}%）；` : ''
+  }${
+    bestExpect ? `期望值最高：${bestExpect.topic}；` : ''
+  }點選各款可看完整獎金結構與頭獎機率，每週自動更新。`;
 
-  const totalPrize = useMemo(
-    () => target?.structure.reduce((p, c) => bn(c.prize).times(c.count).plus(p), bn(0)) ?? bn(0),
-    [target],
-  );
-  const totalRevenue = useMemo(
-    () => (target ? bn(target.price).times(target.total) : bn(0)),
-    [target],
-  );
-  const feedbackRate = useMemo(
-    () => totalPrize.div(totalRevenue).times(100),
-    [totalPrize, totalRevenue],
-  );
+  const faq = [
+    {
+      q: '哪一款刮刮樂中獎率最高？',
+      a: `目前販售中的刮刮樂，中獎率最高的是${fmt(
+        bestBingo,
+        'bingoRate',
+        '%',
+      )}。不過中獎率包含刮中與售價相同金額的「回本獎」，若想真正賺錢，請參考賺錢率。`,
+    },
+    {
+      q: '哪一款刮刮樂賺錢機率最高？',
+      a: `刮中金額大於售價的機率（賺錢率）最高的是${fmt(bestWin, 'winRate', '%')}。`,
+    },
+    {
+      q: '買哪一款刮刮樂最划算？',
+      a: `以每花 100 元平均可拿回的獎金（期望值，已扣除超過 5,000 元獎金的稅金）來看，目前最高的是${fmt(
+        bestExpect,
+        'expect',
+        '元',
+      )}。所有刮刮樂的期望值都低於 100 元，長期購買必定虧損，請量力而為。`,
+    },
+    {
+      q: '目前熱賣中的刮刮樂有哪些？',
+      a: `目前共有 ${instants.length} 款：${instants.map((v) => v.topic).join('、')}。`,
+    },
+    {
+      q: '什麼是刮刮樂？',
+      a: '刮刮樂是台灣彩券發行的即開型彩券，刮開券面即可立即得知是否中獎與中獎金額，每款有不同的遊戲主題、玩法與獎金結構。',
+    },
+  ];
+
+  const jsonLd = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      url,
+      name: '刮刮樂攻略',
+      inLanguage: 'zh-Hant-TW',
+      publisher: {
+        '@type': 'Organization',
+        name: 'Celestial Studio',
+        logo: { '@type': 'ImageObject', url: LOGO_URL },
+      },
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: faq.map((v) => ({
+        '@type': 'Question',
+        name: v.q,
+        acceptedAnswer: { '@type': 'Answer', text: v.a },
+      })),
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'ItemList',
+      name: `${year}刮刮樂中獎率排行`,
+      itemListElement: instants.map((v, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        name: v.topic,
+        url: `${SITE_URL}${instantPath(v.id)}`,
+      })),
+    },
+  ];
 
   const click = useCallback(
     (key: keyof InstantStat) => {
@@ -81,88 +173,13 @@ const Home = () => {
 
   return (
     <>
-      <Head>
-        <title>{title}</title>
-        <meta name="description" content={description} />
-        <meta
-          name="google-site-verification"
-          content="VZYlmjm2nQXB01Ifn3vwk9X9z0b9wWCC7glkeOpWZlg"
-        />
-        <script type="application/ld+json">
-          {`
-{
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "什麼是刮刮樂?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "刮刮樂主要訴求在於提供即時性的樂趣，消費者刮開可立即得知是否中獎與中獎金額，豐富多樣化的遊戲主題、券面設計及視覺色彩，刮開過程中可體驗不同的玩法及樂趣"
-            }
-        },
-        {
-          "@type": "Question",
-          "name": "目前熱賣中的刮刮樂有哪些?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "${stats.map((v) => v.topic).join('、')}"
-            }
-        }
-    ]
-}
-`}
-        </script>
-        <script type="application/ld+json">
-          {`
-{
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "url": "${url}",
-  "name": "${title}",
-  "description": "${description}",
-  "inLanguage": "zh-Hant",
-  "publisher": {
-    "@type": "Organization",
-    "name": "Celestial Studio",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://lottery.celestialstudio.net/icon.png"
-    }
-  }
-}
-`}
-        </script>
-        <script type="application/ld+json">
-          {`
-{
-  "@context": "https://schema.org",
-  "@type": "WebPage",
-  "url": "${url}",
-  "name": "${title}",
-  "description": "${description}",
-  "inLanguage": "zh-Hant",
-  "isPartOf": {
-    "@id": "${url}"
-  },
-  "mainEntityOfPage": {
-    "@id": "${url}"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "Celestial Studio",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://lottery.celestialstudio.net/icon.png"
-    }
-  },
-  "datePublished": "${new Date().toISOString()}",
-  "dateModified": "${new Date().toISOString()}"
-}
-`}
-        </script>
-      </Head>
+      <Seo
+        title={title}
+        description={description}
+        path="/"
+        image={instants[0]?.picPath || undefined}
+        jsonLd={jsonLd}
+      />
       <div>
         <div className="my-2 flex h-[50px] items-center justify-center gap-2">
           <Image src={IcLogo} alt="logo" className="h-full" />
@@ -270,7 +287,9 @@ const Home = () => {
                   },
                 )}
               >
-                {v.topic}
+                <Link href={instantPath(v.id)} className="hover:underline">
+                  {v.topic}
+                </Link>
               </div>
               <div className="box-border w-[calc(100%/11)] min-w-[75px] px-1 py-2">${v.price}</div>
               <div className="box-border w-[calc(100%/11)] min-w-[150px] px-1 py-2">
@@ -317,11 +336,10 @@ const Home = () => {
               <div className="box-border w-[calc(100%/11)] min-w-[100px] px-1 py-2">
                 {v.topCount}張
               </div>
-              <div
-                className="box-border w-[calc(100%/11)] min-w-[150px] px-1 py-2"
-                onClick={() => setOpenIdx(i)}
-              >
-                <div className="cursor-pointer text-weissbier underline">點我看更多</div>
+              <div className="box-border w-[calc(100%/11)] min-w-[150px] px-1 py-2">
+                <Link href={instantPath(v.id)} className="text-weissbier underline">
+                  {v.topic}機率分析
+                </Link>
               </div>
             </div>
           ))}
@@ -336,7 +354,7 @@ const Home = () => {
           <div className="box-border bg-white px-8 py-6 sm:px-[60px] sm:py-10">
             <div className="flex items-center gap-4">
               <Image src={IcLogo} alt="logo" />
-              <h1 className="text-4xl font-bold">刮刮樂機率分析</h1>
+              <h2 className="text-4xl font-bold">刮刮樂機率分析</h2>
             </div>
             <p className="my-4">點擊標頭可以排序，尋找最符合自己需求的刮刮樂。</p>
             <div className="flex flex-col gap-2">
@@ -358,7 +376,27 @@ const Home = () => {
               </p>
             </div>
             <p className="my-4">
-              此網頁每週自動至台灣彩券官網取得最新資料並更新。若資料有出入歡迎到 FB 粉專回報給作者。
+              此網頁每週自動至台灣彩券官網取得最新資料並更新（最後更新：{updatedAt}
+              ）。若資料有出入歡迎到 FB 粉專回報給作者。
+            </p>
+            <h2 className="mb-2 mt-6 text-2xl font-bold">刮刮樂常見問題</h2>
+            <div className="mb-6 flex flex-col gap-4">
+              {faq.map((v) => (
+                <div key={v.q}>
+                  <h3 className="font-bold">{v.q}</h3>
+                  <p>{v.a}</p>
+                </div>
+              ))}
+            </div>
+            <h2 className="mb-2 mt-6 text-2xl font-bold">最近下市的刮刮樂</h2>
+            <p>
+              已下市的刮刮樂仍保留完整的中獎率與獎金結構，手上還有舊券可以用來核對獎金與兌獎期限。
+            </p>
+            <InstantLinkList items={recentlyClosed} showClosedAt />
+            <p className="my-4">
+              <Link href={ARCHIVE_PATH} className="text-weissbier underline">
+                查看全部 {expiredCount} 款已下市刮刮樂 →
+              </Link>
             </p>
             <p className="text-xl font-bold">聯絡我們</p>
             <Link
@@ -372,79 +410,6 @@ const Home = () => {
           <p className="mt-4 text-center text-sm">Copyright © 2022 Celestial Studio</p>
         </div>
       </div>
-      <Modal open={openIdx !== undefined} onClose={() => setOpenIdx(undefined)}>
-        <div className="absolute left-1/2 top-1/2 max-h-[calc(100vh-140px)] w-[640px] max-w-[calc(100vw-30px)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl bg-white p-5 outline-none">
-          <h2 className="text-3xl font-bold">{target?.topic}</h2>
-          <div className="mt-4 flex flex-col gap-2">
-            <p>
-              <b>發行日：</b>
-              {target?.releasedAt}
-            </p>
-            <p>
-              <b>下市日：</b>
-              {target?.closedAt}
-            </p>
-            <p>
-              <b>總獎金：</b>${totalPrize.toFormat()}
-            </p>
-            <p>
-              <b>總營業額：</b>${totalRevenue.toFormat()}
-            </p>
-            <p>
-              <b>總回饋率：</b>
-              {feedbackRate.toFormat(2)}%
-            </p>
-            {target && (
-              <p>
-                <b>賺錢時平均賺：</b>${bn(target.expectWin).dp(2).toFormat()}
-              </p>
-            )}
-            {target && (
-              <p>
-                <b>賠錢時平均賠：</b>${bn(target.expectLose).dp(2).toFormat()}
-              </p>
-            )}
-            <p>
-              <b>
-                獎金結構：
-                <b />
-              </b>
-            </p>
-            <div>
-              <div className="flex bg-persimmon p-2 text-center font-bold text-white">
-                <div className="w-1/3">獎項</div>
-                <div className="w-1/3">張數</div>
-                <div className="w-1/3">機率</div>
-              </div>
-              {target?.structure.sort(compare('prize', 'desc')).map((v, i) => (
-                <div
-                  key={i}
-                  className={classNames('flex text-center', {
-                    'bg-yellow': i % 2 === 0,
-                    'bg-white': i % 2 === 1,
-                  })}
-                >
-                  <div className="w-1/3 px-1 py-2">${bnFormat(v.prize)}</div>
-                  <div className="w-1/3 px-1 py-2">{bnFormat(v.count)}</div>
-                  <div className="relative w-1/3 px-1 py-2">
-                    <div className="relative z-10">
-                      {bn(v.count).div(target.total).times(100).toFixed(5)}%
-                    </div>
-                    <span
-                      className="absolute inset-y-0 left-1 my-1 rounded-sm bg-gold"
-                      style={{
-                        width: `calc((100% - 8px)*${bn(Math.log(v.count))
-                          .div(Math.log(target.total))
-                          .toNumber()})`,
-                      }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </Modal>
       <Snackbar
         open={open}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}

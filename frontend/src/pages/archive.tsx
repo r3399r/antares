@@ -77,7 +77,7 @@ const Archive = ({ groups, activeCount, total, updatedAt }: Props) => {
             <span>已下市刮刮樂</span>
           </nav>
 
-          <h1 className="text-3xl font-bold">已下市刮刮樂一覽</h1>
+          <h1 className="text-2xl font-bold sm:text-3xl">已下市刮刮樂一覽</h1>
           <p className="mt-4 leading-7">
             這裡收錄台灣彩券已經停止販售的刮刮樂，共 {total} 款。每一款都保留完整的中獎率、賺錢率、
             頭獎機率與獎金結構，手上還有舊券時可以用來核對獎金與兌獎期限。想看目前還在販售的{' '}

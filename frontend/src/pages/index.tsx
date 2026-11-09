@@ -338,7 +338,7 @@ const Home = ({ instants, recentlyClosed, expiredCount, updatedAt, year }: Props
               </div>
               <div className="box-border w-[calc(100%/11)] min-w-[150px] px-1 py-2">
                 <Link href={instantPath(v.id)} className="text-weissbier underline">
-                  {v.topic}機率分析
+                  機率分析
                 </Link>
               </div>
             </div>

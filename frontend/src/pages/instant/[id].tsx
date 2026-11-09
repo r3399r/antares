@@ -140,7 +140,7 @@ const InstantPage = ({ stat, related, updatedAt }: Props) => {
             <span>{stat.topic}</span>
           </nav>
 
-          <h1 className="text-3xl font-bold">
+          <h1 className="text-2xl font-bold sm:text-3xl">
             {stat.topic}刮刮樂中獎機率分析
             <span className="ml-2 align-middle text-base font-normal">
               第{stat.id}期{stat.isExpired ? '・已下市' : ''}
@@ -198,21 +198,28 @@ const InstantPage = ({ stat, related, updatedAt }: Props) => {
               ...(stat.exchangeLastDate ? [['兌獎期限', stat.exchangeLastDate]] : []),
               ['總獎金', `$${totalPrize.toFormat()}`],
             ].map(([k, v]) => (
-              <div key={k} className="rounded-lg bg-yellow p-3">
-                <dt className="text-sm">{k}</dt>
-                <dd className="text-lg font-bold">{v}</dd>
+              // The widest value is a 15-character total prize, which overflows a
+              // half-width phone column at text-lg; break-words is the last resort.
+              <div key={k} className="rounded-lg bg-yellow p-2 sm:p-3">
+                <dt className="text-xs sm:text-sm">{k}</dt>
+                <dd className="break-words text-base font-bold sm:text-lg">{v}</dd>
               </div>
             ))}
           </dl>
 
           <h2 className="mt-8 text-2xl font-bold">{stat.topic}獎金結構與各獎項中獎機率</h2>
-          <table className="mt-3 w-full text-center">
+          {/* A phone fits three numeric columns at most, so the percentage (the least
+              readable of the two odds columns) drops out below sm; it stays in the HTML. */}
+          <table className="mt-3 w-full table-fixed text-center text-xs sm:text-base">
             <thead>
               <tr className="bg-persimmon text-white">
-                <th className="p-2">獎項</th>
-                <th className="p-2">張數</th>
-                <th className="p-2">機率</th>
-                <th className="p-2">約每幾張中 1 張</th>
+                <th className="px-1 py-2 sm:p-2">獎項</th>
+                <th className="px-1 py-2 sm:p-2">張數</th>
+                <th className="hidden px-1 py-2 sm:table-cell sm:p-2">機率</th>
+                <th className="px-1 py-2 sm:p-2">
+                  約每幾張
+                  <wbr />中 1 張
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -221,10 +228,14 @@ const InstantPage = ({ stat, related, updatedAt }: Props) => {
                   key={v.prize}
                   className={classNames({ 'bg-yellow': i % 2 === 0, 'bg-white': i % 2 === 1 })}
                 >
-                  <td className="p-2">{v.prize === 0 ? '未中獎' : `$${bnFormat(v.prize)}`}</td>
-                  <td className="p-2">{bnFormat(v.count)}</td>
-                  <td className="p-2">{bn(v.count).div(stat.total).times(100).toFixed(5)}%</td>
-                  <td className="p-2">{oneIn(stat.total, v.count)}</td>
+                  <td className="px-1 py-2 sm:p-2">
+                    {v.prize === 0 ? '未中獎' : `$${bnFormat(v.prize)}`}
+                  </td>
+                  <td className="px-1 py-2 sm:p-2">{bnFormat(v.count)}</td>
+                  <td className="hidden px-1 py-2 sm:table-cell sm:p-2">
+                    {bn(v.count).div(stat.total).times(100).toFixed(5)}%
+                  </td>
+                  <td className="px-1 py-2 sm:p-2">{oneIn(stat.total, v.count)}</td>
                 </tr>
               ))}
             </tbody>

@@ -71,7 +71,7 @@ Resources:
     Properties:
       BucketName: !Sub ${Project}-${TargetEnvr}-y
       WebsiteConfiguration:
-        ErrorDocument: index.html
+        ErrorDocument: 404.html
         IndexDocument: index.html
       PublicAccessBlockConfiguration:
         BlockPublicAcls: false

@@ -71,7 +71,12 @@ Resources:
     Properties:
       BucketName: !Sub ${Project}-${TargetEnvr}-y
       WebsiteConfiguration:
-        ErrorDocument: 404.html
+        # Keep index.html: S3 already returns HTTP 404 for unknown keys, so serving
+        # 404.html instead only changes the body. Any edit here updates S3Bucket,
+        # which makes CloudFormation re-resolve the Route53 record from
+        # !GetAtt CloudFrontDistribution.DomainName -- and the deploy role has no
+        # CloudFront read permission, so the whole stack update rolls back.
+        ErrorDocument: index.html
         IndexDocument: index.html
       PublicAccessBlockConfiguration:
         BlockPublicAcls: false

@@ -66,37 +66,41 @@ const Archive = ({ groups, activeCount, total, updatedAt }: Props) => {
   return (
     <>
       <Seo title={title} description={description} path={ARCHIVE_PATH} jsonLd={jsonLd} />
-      <div className="mx-auto max-w-[800px] px-4 pb-10 text-brown">
-        <nav aria-label="breadcrumb" className="flex items-center gap-2 py-3 text-sm">
-          <Link href="/" className="flex items-center gap-1 text-weissbier underline">
-            <Image src={IcLogo} alt="" className="h-5 w-auto" />
-            刮刮樂攻略
-          </Link>
-          <span>›</span>
-          <span>已下市刮刮樂</span>
-        </nav>
+      <div className="mx-auto max-w-[800px] p-4 text-brown">
+        <div className="rounded-xl bg-white px-5 py-6 sm:px-10 sm:py-8">
+          <nav aria-label="breadcrumb" className="flex items-center gap-2 py-3 text-sm">
+            <Link href="/" className="flex items-center gap-1 text-weissbier underline">
+              <Image src={IcLogo} alt="" className="h-5 w-auto" />
+              刮刮樂攻略
+            </Link>
+            <span>›</span>
+            <span>已下市刮刮樂</span>
+          </nav>
 
-        <h1 className="text-3xl font-bold">已下市刮刮樂一覽</h1>
-        <p className="mt-4 leading-7">
-          這裡收錄台灣彩券已經停止販售的刮刮樂，共 {total} 款。每一款都保留完整的中獎率、賺錢率、
-          頭獎機率與獎金結構，手上還有舊券時可以用來核對獎金與兌獎期限。想看目前還在販售的{' '}
-          {activeCount} 款，請回到{' '}
-          <Link href="/" className="text-weissbier underline">
-            刮刮樂中獎率排行
-          </Link>
-          。
-        </p>
+          <h1 className="text-3xl font-bold">已下市刮刮樂一覽</h1>
+          <p className="mt-4 leading-7">
+            這裡收錄台灣彩券已經停止販售的刮刮樂，共 {total} 款。每一款都保留完整的中獎率、賺錢率、
+            頭獎機率與獎金結構，手上還有舊券時可以用來核對獎金與兌獎期限。想看目前還在販售的{' '}
+            {activeCount} 款，請回到{' '}
+            <Link href="/" className="text-weissbier underline">
+              刮刮樂中獎率排行
+            </Link>
+            。
+          </p>
 
-        {groups.map((g) => (
-          <section key={g.year}>
-            <h2 className="mt-8 text-2xl font-bold">
-              {g.year} 年下市（{g.items.length} 款）
-            </h2>
-            <InstantLinkList items={g.items} showClosedAt />
-          </section>
-        ))}
+          {groups.map((g) => (
+            <section key={g.year}>
+              <h2 className="mt-8 text-2xl font-bold">
+                {g.year} 年下市（{g.items.length} 款）
+              </h2>
+              <InstantLinkList items={g.items} showClosedAt />
+            </section>
+          ))}
 
-        <p className="mt-8 text-sm">資料來源：台灣彩券官網，每週自動更新，最後更新 {updatedAt}。</p>
+          <p className="mt-8 text-sm">
+            資料來源：台灣彩券官網，每週自動更新，最後更新 {updatedAt}。
+          </p>
+        </div>
       </div>
     </>
   );
